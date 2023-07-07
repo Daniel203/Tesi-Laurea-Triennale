@@ -1,0 +1,35 @@
+\section{Progetto}
+    \subsection{Contesto}
+    Come detto nell'introduzione, il mio obiettivo durante questo periodo in azienda era realizzare un programma che leggesse, o in alcuni casi generasse, degli hash code da salvare in blockchain. Il motivo di questa scelta è garantire che il documento non sia mai stato modificato dopo la firma del cliente, in quanto l'hash code dipende dai dati presenti nel file, e anche la modifica di un byte andrebbe a cambiare questo codice.\\
+    In azienda tutti i dati relativi ai documenti sono salvati in un database che indica oltre alle altre cose anche lo stato del documento: \textit{salvare, salvato, in salvataggio...} (con salvato si intende che il file è stato copiato correttamente sul server).
+    
+    
+    \subsection{Flusso dati}
+        \subsubsection{Creazione Smart contract}
+        La prima cosa che ho fatto è stato creare uno smart contract da salvare nella blockchain di Ethereum. Lo smart contract realizzato è molto semplice poichè ha un dizionario che contiene un mapping delle chiavi del documento con il relativo hash code. Poi ci sono due metodi, un getter e un setter: il primo serve per ottenere l'hash code salvato associato alle chiavi fornite come parametri alla funzione, il secondo serve per salvare una coppia di \textit{chiavi - hash code} nello smart contract.
+        
+        \subsubsection{Lettura dati dal DB}
+        Dopo aver creato il luogo in cui salvare i dati, devo ottenere i dati da processare. Questa operazione è abbastanza lineare in quanto basta leggere i dati da un paio di tabelle. L'unico punto di interesse è quello di selezionare solo i documenti che devono ancora essere salvati, cioè con codice di salvataggio pari a 3 (numero arbitrario scelto dall'azienda).
+        Il codice sql non viene gestito direttamente dal codice C\#, ma ho creato una stored procedure in modo da separare la parte implementativa da quella di utilizzo.
+        
+        \subsubsection{Salvataggio dati su blockchain}
+        Una volta ottenuti i dati, tutte le operazioni vengono gestite tramite codice scritto in C\#. Prima viene chiamata la stored procedure con cui vengono estratti tutti i documenti e le relative chiavi, poi viene calcolato un hash code se non già presente nel DB, e per finire viene salvato il tutto in blockchain. Per far comunicare il codice C\# con la blockchain ho utilizzato una libreria chiamata Nethereum che mette a disposizione tutta una serie di metodi e classi per poter interagire con la rete Ethereum. 
+        %\todo[size=\small]{Potrei parlare di come viene fatto il deploy dello smart contract, e volendo anche delle difficoltà che ho avuto con Nethereum nel leggere i codici di errore dello smart contract}
+        
+        \subsubsection{Aggiornamento dati sul DB}
+        L'ultimo passaggio è quello di aggiornare i dati sul DB impostando lo stato del documento su \textit{caricato}. Per farlo ho scritto una semplice UPDATE in sql e ho salvato il codice in una stored procedure.
+        
+    
+    \subsection{Automatizzazione}
+    Il codice scritto funziona perfettamente e ogni volta che viene lanciato salva i documenti in blockchain come richiesto, però in azienda utilizzano un sistema per automatizzare tutti questi task che devono essere eseguiti di frequente, quindi mi è stato richiesto di implementare questa funzione.
+        \subsubsection{Quartz}
+        Quartz è un software che permette di avviare dei processi (jobs) al verificarsi di alcuni eventi di tipo temporale, ad esempio ogni n secondi, ogni specifico giorno della settimana, fino a una certa data...\\
+        
+        \subsubsection{Implementazione}
+        Scrivere del codice che possa essere implementato in quartz è molto semplice, basta importare la libreria nel progetto e creare una classe che erediti e implementi i metodi necessari a quartz.
+        Poi per programmare l'avvio dei processi bisogna scrivere un file xml in cui vengono specificati una serie di parametri tra cui l'evento che triggera il processo. Una volta fatto questo basterà avviare il progetto e quartz si metterà in attesa che un evento si verifichi.
+
+        \subsubsection{Processi e DB}
+        In realtà nel progetto che ho sviluppato, il mio processo non veniva lanciato esattamente ogni n secondi, ma faceva altro.
+        Ogni n secondi il processo andava a leggere una tabella nel db in cui vengono inseriti in una coda tutti i processi che devono essere eseguiti. Ogni processo è associato a un id e una sigla di 3 caratteri. Se il mio processo era presente nella coda, allora veniva eseguito e al suo termine veniva tolto dalla coda e inserito nello storico dei processi eseguiti assieme a dei log o eventuali errori.
+        Quindi per triggerare il processo oltre all'evento temporale era necessario che il codice del processo venisse anche aggiunto alla coda dei lavori da eseguire.

@@ -1,0 +1,17 @@
+\section{Ambienti e linguaggi di sviluppo}
+    \subsection{Smart contract}
+    La creazione dello smart contract è stata la parte che più mi ha costretto a studiare e apprendere un nuovo modo di lavorare.
+    Il linguaggio più diffuso e che io ho deciso di utilizzare è stato Solidity, un linguaggio che per sintassi può assomigliare ad altri linguaggi ispirati al C, ma che comunque ha le sue caratteristiche peculiari. 
+    Per comodità di sviluppo ho utilizzato un'IDE online (Remix) che mi ha permesso di non dover compilare il codice manualmente e soprattutto di compiere alcune azioni di test in modo molto più veloce. Per esempio, l'IDE arriva già con una test-chain incorporata, ma supporta anche l'utilizzo di altre chain, poi si può fare il deploy e interrogare lo smart contract direttamente dal sito web, senza dover creare del codice ad hoc in altri linguaggi, e tante altre features.
+    Quindi per sviluppare e testare lo smart contract ho usato il linguaggio Solidity sulla piattaforma Remix.
+    
+    \subsection{C\#}
+    Il linguaggio principale di questo progetto è stato C\# con il quale ho scritto la maggior parte del codice, dall'interrogazione al DB fino alla comunicazione con lo smart contract.
+    Come IDE ho usato Visual Studio 2017, che ha un'ottima integrazione con il linguaggio e viene fornito di molti tools utili per il debug.
+    La parte interessante del codice è stata la comunicazione con lo smart contract, in quanto le interrogazioni al DB sono un procedimento abbastanza standard e molto facile da trovare online.\\
+    Per prima cosa dopo aver scritto il codice in Solidity ho dovuto compilare il tutto usando l'apposito compiler. Poi tramite un'estensione di visual studio ho generato del codice C\# che mappasse ogni funzione del codice dello smart contract in modo da poterci interagire tramite il mio codice C\#. Avendo le interfacce per la comunicazione, il processo di deploy e interrogazione dello smart contract risulta abbastanza lineare e facile da capire in quanto è sufficiente richiamare i metodi della classe auto generata.
+    
+    \subsection{Tools aggiuntivi per Blockchain}
+    Oltre agli strumenti di sviluppo citati sopra, ho anche utilizzato una serie di tool per poter deployare e interagire con il mio smart contract.
+    Per prima cosa ho avuto bisogno di un wallet crypto per poter caricare il mio codice in blockchain, in quanto ogni transazione deve essere autenticata. In questo caso ho utilizzato un'estensione per il browser chiamata Metamask. Poi ho utilizzato delle chain di test, tra cui kovan, che sono utili in quanto rispecchiano la chain di Ethereum, ma hanno la possibilità di utilizzare delle crypto "virtuali" che è possibile ottenere gratuitamente e che non vanno a cambiare lo stato della main-net (Ethereum).
+    Poi ho utilizzato un sito web chiamato Infuria il cui scopo è quello di fare da intermediario alle mie chiamate alla blockchain. In pratica io invece di fare le chiamate direttamente alla main-net di riferimento, utilizzo questo sito come API di appoggio. Questo offre un grandissimo vantaggio ossia quello di non dover eseguire una copia locale della chain in utilizzo.
