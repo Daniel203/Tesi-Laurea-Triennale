@@ -1,4 +1,6 @@
 \section{Stage}
+
+\subsection{Analisi dei requisiti}
 L'azienda in cui ho svolto l'attività di stage universitario opera
 principalmente nel settore assicurativo producendo gestionali per
 semplificare l'amministrazione degli utenti, delle scadenze delle polizze,
@@ -7,8 +9,6 @@ In particolare si cerca di semplificare tutto il procedimento che viene svolto
 dai vari broker assicurativi durante il procedimento di ricerca e stipula di
 una polizza, dalla realizzazione di preventivi basati sulle richieste
 specifiche del cliente fino alla stipula del contratto.
-
-\subsection{Salvataggio dei documenti}
 Tra le varie funzionalità che offrono i loro prodotti c'è anche la possibilità
 di salvare i documenti dei clienti, in particolare i contratti firmati 
 direttamente all'interno del programma, Ovviamente questi documenti sono
@@ -23,7 +23,7 @@ Per quanto riguarda l'autenticità invece viene utilizzata una firma digitale
 che viene apposta sul file, in questo modo è possibile verificare che il file
 sia stato firmato da una persona autorizzata e che quindi sia autentico. 
 
-\subsection{Problemi riscontrati}
+\subsubsection{Problemi da risolvere}
 Il sistema utilizzato dall'azienda è abbastanza solido e viene utilizzato da
 anni, tuttavia si è cercato un modo per migliorarlo e renderlo più sicuro e
 affidabile. \\
@@ -36,7 +36,7 @@ in modo da rendere il file integro. \\
 Serviva trovare un modo per garantire in modo trasparente al cliente che
 l'hash-code salvato non potesse essere in nessun modo modificato.
 
-\subsection{Soluzioni proposte}
+\subsubsection{Soluzioni proposte}
 Sono state proposte varie soluzioni tra cui quella di salvare in molteplici
 database l'hash-code in modo da rendere più difficile la modifica, oppure
 quella di salvare l'hash-code in un database esterno ad esempio online,
@@ -51,8 +51,8 @@ tecnologia blockchain per risolvere il problema.
 
 \newpage
 
-\subsection{Blockchain}
-\subsubsection{Descrizione}
+\subsection{Soluzione: Blockchain}
+\subsubsection{Introduzione}
 La blockchain è una tecnologia che permette di salvare dati in modo sicuro e
 affidabile, in particolare i dati vengono salvati in blocchi che vengono poi
 concatenati tra loro in modo da formare una catena, da qui il nome
@@ -106,8 +106,8 @@ la quale possono interagire direttamente. \\
 Nel nostro caso bastava creare un programma con due interfacce, ovvero due 
 funzioni:
 \begin{itemize}
-    \item \textbf{saveHashCode(...)}: per inserire un nuovo hash-code all'interno 
-        della blockchain. 
+    \item \textbf{saveHashCode(...)}: per inserire un nuovo hash-code
+        all'interno della blockchain. 
     \item \textbf{getHashCode(...)}: per ottenere l'hash-code di un file.
 \end{itemize}
 
@@ -136,8 +136,8 @@ per capire come funzionava e come potevo integrare la blockchain. \\
 Il progetto sostanzialmente contiene una serie di classi che contengono la
 logica che deve essere eseguita dal processo e poi una libreria che si occupa
 della configurazione e dell'esecuzione dei processi. \\
-Ovviamente il progetto contiene anche delle utility per poter interagire tramite 
-chiamate http e per poter eseguire operazioni sul database.
+Ovviamente il progetto contiene anche delle utility per poter interagire
+tramite chiamate http e per poter eseguire operazioni sul database.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{ProcessManagerProjectComponents.png}
@@ -146,18 +146,18 @@ chiamate http e per poter eseguire operazioni sul database.
 \end{figure}
 
 Come si può vedere dalla figura \ref{fig:process-manager-project-components} il
-progetto ha 4 parti fondamentali:
+progetto ha quattro parti fondamentali:
 \begin{itemize}
-    \item \textbf{Gestore dei processi}: è la libreria che si occupa di gestire i
-        processi, in particolare si occupa di leggere la configurazione e di
+    \item \textbf{Gestore dei processi}: è la libreria che si occupa di gestire
+        i processi, in particolare si occupa di leggere la configurazione e di
         eseguire i processi. La configurazione è un file json che contiene
-        informazioni riguardo al nome del processo, i dati da passare, 
-        quando eseguire e ogni quanto riavviare il processo ...
+        informazioni riguardo al nome del processo, i dati da passare, quando
+        eseguire e ogni quanto riavviare il processo ...
     \item \textbf{Processi}: sono le classi che contengono la logica che deve
-        essere eseguita dal processo, in particolare ogni classe deve implementare
-        l'interfaccia \textit{IProcess} che contiene il metodo \textit{execute()}
-        che viene eseguito dal gestore dei processi.
-        Il processo non contiene effettivamente il codice che implementa le 
+        essere eseguita dal processo, in particolare ogni classe deve
+        implementare l'interfaccia \textit{IProcess} che contiene il metodo
+        \textit{execute()} che viene eseguito dal gestore dei processi. Il
+        processo non contiene effettivamente il codice che implementa le
         funzioni che devono essere eseguite, ma richiama le interfacce fornite
         dal Service di riferimento. 
     \item \textbf{Services}: sono le classi che vengono richiamate dal processo
@@ -168,7 +168,56 @@ progetto ha 4 parti fondamentali:
         ma al suo interno richiama due funzioni del manager, una per il
         salvataggio dei dati del documento e una per il salvataggio
         dell'hash-code
-    \item \textbf{Magagers}: sono le classi che si occupano di interagire direttamente
-        con dei servizi tramite chiamate http, o di eseguire operazioni
-        sul database, oppure di comunicare con altri servizi.
+    \item \textbf{Magagers}: sono le classi che si occupano di interagire
+        direttamente con dei servizi tramite chiamate http, o di eseguire
+        operazioni sul database, oppure di comunicare con altri servizi.
 \end{itemize}
+
+\subsubsection{Analisi funzionamento dei processi}
+La maggior parte dei processi implementati dal software funzionano tramite la
+logica di una coda di richieste (FIFO).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{DatabaseProcessTableSchema.png} 
+    \caption{Tabella contenente la lista dei processi}
+    \label{fig:table-process-list}
+\end{figure}
+
+La figura \ref{fig:table-process-list} mostra lo schema di funzionamento della 
+coda dei processi. \\
+Sostanzialmente esiste una tabella nel database che su ogni record contiene
+dei dati che possono essere letti ed interpretati dai singoli processi e che 
+ne determinano il funzionamento. \\ 
+Ogni record contiene una serie di dati obbligatori e altri dati che invece 
+sono opzionali. I dati obbligatori sono:
+\begin{itemize}
+    \item \textbf{Codice Processo}: è un codice che identifica il processo che
+        deve essere eseguito. Questo codice viene utilizzato per capire quale
+        classe deve essere eseguita dal gestore dei processi. Viene scelto 
+        arbitrariamente dal programmatore e salvato in un file di 
+        configurazione all'interno del codice del programma.
+    \item \textbf{Parametri}: una serie di colonne che sono adibite al passaggio
+        di parametri al processo. Questi parametri possono essere utilizzati 
+        per passare dati che sono necessari al processo per poter funzionare.
+        Un esempio di parametro può essere il nome del file che deve essere
+        salvato o il nome della cartella in cui deve essere salvato.
+    \item \textbf{Dati utente}: una serie di dati che identificano l'utente che
+        ha richiesto l'esecuzione del processo. Questi dati sono utili
+        in caso di problemi o di errori, in modo da poter risalire all'utente
+        che ha fatto partire la richiesta e poterlo contattare.
+    \item \textbf{Dati aggiuntivi}: sono dati che come quelli dell'utente
+        servono in caso di problemi. Possono essere dati aggiuntivi le 
+        informazioni riguardo alla data di inserimento e di esecuzione del 
+        processo, il nome della macchina che ha aggiunto e quella che ha 
+        eseguito il processo ...
+\end{itemize}
+
+La tabella viene popolata automaticamente da altri processi oppure vengono
+inseriti nuovi record in base alle operazioni eseguite dall'utente. Per esempio
+se un utente richiede il salvataggio di un nuovo documento tramite
+l'interfaccia grafica, allora viene inserito dal programma una nuova richiesta
+nella tabella con i dati necessari a far funzionare il processo di
+conservazione.
+
+\subsection{Implementazione}
