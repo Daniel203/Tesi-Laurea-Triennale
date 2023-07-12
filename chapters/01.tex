@@ -93,7 +93,7 @@ già esistente che salvava sul database.
 Tuttavia serviva capire come creare un punto d'accesso dal lato blockchain
 a cui poter inviare le richieste.
 
-\subsubsection{Smart Contracts}
+\subsubsection{Smart Contract}
 Alcune blockchain come Ethereum permettono di creare degli smart contracts,
 ovvero dei programmi che vengono eseguiti all'interno della blockchain e che
 possono interagire con essa. \\
@@ -103,8 +103,13 @@ http e non possono accedere a risorse esterne, ma possono solamente eseguire
 una lista di operazioni descritta dal programmatore. In sostanza sono delle
 macchine a stati finiti che vengono eseguite all'interno della blockchain e con
 la quale possono interagire direttamente. \\
-Nel nostro caso bastava creare un programma con due interfacce, ovvero due 
-funzioni:
+La caratteristica di questa tecnologia è che gli smart contracts sono dei 
+contratti senza intermediari che vengono eseguiti in modo automatico e senza 
+nessun supervisore umano, quindi potenzialmente potrebbero essere utilizzate
+per stipulare, ad esempio, delle polizze assicurative totalmente gestite
+da sistemi informatici. Nel nostro caso bastava questa caratteristica non è
+stata necessaria in quanto dovevamo solo salvare dei dati.
+Le interfacce che sono state create sono le seguenti:
 \begin{itemize}
     \item \textbf{saveHashCode(...)}: per inserire un nuovo hash-code
         all'interno della blockchain. 
@@ -242,11 +247,79 @@ Al processo vengono passati i seguenti valori:
 
 Ora che il processo è stato creato, ho dovuto creare il codice che si occupa
 di interagire con la blockchain, il punto focale di questo progetto. \\
-Per poterlo realizzare ho fatto affidamento agli smart contract, che come 
-detto prima, sono effettivamente delle macchine a stati finiti che hanno un 
-collegamento diretto con la blockchain in quanto vi risiedono al suo interno.\\
-Per poter sviluppare gli smart contract ho dovuto utilizzare il linguaggio di
-programmazione \textit{Solidity} che è stato sviluppato appositamente per
-questo scopo. \\
+Per poterlo realizzare ho utilizzato la tecnologia degli smart-contract che ho
+sviluppato tramite il linguaggio Solidity. 
 
+Solidity è un linguaggio di programmazione ad alto livello utilizzato per
+scrivere smart contract sulla blockchain Ethereum. Grazie a Solidity, gli
+sviluppatori possono creare applicazioni decentralizzate (DApps) sulla
+blockchain Ethereum, che possono essere utilizzate per una vasta gamma di
+scopi, come ad esempio la gestione di token, la registrazione di proprietà
+intellettuale, la gestione dei contratti e molto altro ancora.
 
+Per poter scrivere codice Solidity ho utilizzato l'editor di testo Remix, 
+un editor online che permette di testare i propri smart-contract su delle 
+blockchain di test, in modo da non aver nessun costo di transazione.
+Infatti un fattore da considerare è che ogni transazione che viene eseguita
+sulla blockchain ha un costo, che viene pagato in Ether, la valuta della
+blockchain Ethereum. Anche il deploy di uno smart-contract è una transazione
+e perciò ha un costo. Per questo motivo esistono delle blockchain di test,
+realizzate appositamente per permettere agli sviluppatori di testare i propri
+codici senza dover ogni volta pagare. L'IDE online Remix aiuta proprio a fare
+questo, permettendo di scegliere in modo facile su quale blockchain salvare
+il proprio smart-contract. Questo ovviamente sarebbe stato possibile anche
+senza Remix, ad esempio scaricando dei software che eseguono
+una blockchain di test sulla propria macchina come ganache-cli, ma l'IDE
+online è molto più comodo e veloce da utilizzare. \\
+Inoltre Remix ha una grafica che offre un'interfaccia che aiuta anche a 
+visualizzare i costi effettivi del deploy e delle transazioni, oltre ad avere
+già installate tutte le versioni del compilatore e del debugger, in modo 
+da poterli cambiare velocemente e senza doverli scaricare.
+
+\newpage
+
+Il codice Solidity è contenuto in un file con estensione \textit{.sol} ed
+è composto come segue:
+\begin{lstlisting}[language=Solidity]
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+contract MyContract {
+    function helloWorld() public pure returns (string memory) {
+        return "Hello, World!";
+    }
+}
+\end{lstlisting}
+In questo esempio si possono vedere alcune parti fondamentali del codice:
+
+\begin{itemize}
+    \item \textbf{Versione di Solidity}: con il codice \textit{pragma solidity
+        \^0.8.0} si indica la versione del compilatore di Solidity che deve
+        essere utilizzata per compilare il codice. Questo è importante in
+        quanto ogni versione del compilatore ha delle caratteristiche diverse
+        e quindi è importante specificare la versione che si vuole utilizzare.
+    \item \textbf{Contratto}: con la parola chiave \textit{contract} si indica
+        che si sta definendo un nuovo contratto. Il contratto è l'oggetto
+        principale di Solidity, è l'oggetto che viene salvato sulla blockchain
+        e che contiene tutte le funzioni e le variabili che si vogliono
+        utilizzare. Il nome del contratto è il nome inserito dopo la keyword
+        \textit{contract}, in questo caso \textit{MyContract}.
+    \item \textbf{Funzioni}: Le funzioni in Solidity sono come le funzioni in
+        altri linguaggi di programmazione, ma hanno alcune caratteristiche
+        particolari. Per prima cosa le funzioni possono avere due livelli di
+        visibilità: public o internal. Le funzioni pubbliche possono essere
+        chiamate da chiunque, mentre le funzioni internal possono essere
+        chiamate solo da altre funzioni all'interno del contratto. Inoltre le
+        funzioni possono avere delle keyword aggiuntive: \textit{view} o
+        \textit{pure}. Le funzioni \textit{view} sono funzioni che non
+        modificano lo stato del contratto, mentre le funzioni \textit{pure}
+        sono funzioni che non modificano lo stato del contratto e non leggono
+        neanche lo stato del contratto. Esistono anche altre keyword come 
+        \textit{payable} che permette di ricevere Ether, ma non sono state
+        utilizzate in questo progetto.
+    \item \textbf{Tipo di ritorno}: Le funzioni possono ritornare dei valori,
+        come nel caso dell'esempio, in cui la funzione ritorna una stringa. Per
+        specificare il tipo di ritorno della funzione si utilizza la keyword
+        \textit{returns} seguita dal tipo di ritorno. Nel caso in cui la
+        funzione non ritorni nulla, allora non si utilizza la keyword
+        \textit{returns}.
+\end{itemize}
