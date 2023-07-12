@@ -221,3 +221,32 @@ nella tabella con i dati necessari a far funzionare il processo di
 conservazione.
 
 \subsection{Implementazione}
+Per sviluppare questo progetto ho dovuto per prima cosa creare un mio processo
+e il relativo codice-processo nel file di configurazione. Al processo è stato
+assegnato il codice BCH (che identifica il salvataggio su blockchain) e il
+processo è stato chiamato \textit{BlockchainConservationProcess}. \\
+Il processo non ha nulla di particolare al suo interno, semplicemente va a 
+leggere i dati dal database e quando trova nella coda dei processi il suo codice
+allora estrae i parametri dal record sul database e richiama le funzioni per 
+eseguire il salvataggio su blockchain. \\
+Al processo vengono passati i seguenti valori:
+\begin{itemize}
+    \item \textbf{Hash-Code}: il codice viene generato da un algoritmo già 
+        utilizzato all'interno del programma che estrae alcuni dati dalle 
+        informazioni del documento e ne genera un codice univoco.
+    \item \textbf{Codici aggiuntivi}: una serie di parametri aggiuntivi che
+        servono sempre all'interno della logica del gestionale, ma che per me
+        non hanno nessun importanza in quanto non vengono utilizzati, è solo
+        importante salvarli in modo sicuro.
+\end{itemize}
+
+Ora che il processo è stato creato, ho dovuto creare il codice che si occupa
+di interagire con la blockchain, il punto focale di questo progetto. \\
+Per poterlo realizzare ho fatto affidamento agli smart contract, che come 
+detto prima, sono effettivamente delle macchine a stati finiti che hanno un 
+collegamento diretto con la blockchain in quanto vi risiedono al suo interno.\\
+Per poter sviluppare gli smart contract ho dovuto utilizzare il linguaggio di
+programmazione \textit{Solidity} che è stato sviluppato appositamente per
+questo scopo. \\
+
+
