@@ -226,6 +226,7 @@ nella tabella con i dati necessari a far funzionare il processo di
 conservazione.
 
 \subsection{Implementazione}
+\subsubsection{Processo BCH}
 Per sviluppare questo progetto ho dovuto per prima cosa creare un mio processo
 e il relativo codice-processo nel file di configurazione. Al processo è stato
 assegnato il codice BCH (che identifica il salvataggio su blockchain) e il
@@ -246,9 +247,12 @@ Al processo vengono passati i seguenti valori:
 \end{itemize}
 
 Ora che il processo è stato creato, ho dovuto creare il codice che si occupa
-di interagire con la blockchain, il punto focale di questo progetto. \\
-Per poterlo realizzare ho utilizzato la tecnologia degli smart-contract che ho
-sviluppato tramite il linguaggio Solidity. 
+di interagire con la blockchain, il punto focale di questo progetto. 
+
+\subsubsection{Smart Contract}
+Per poter sviluppare questa parte ho utilizzato il linguaggio Solidity,
+un linguaggio realizzato da Ethereum appositamente con lo scopo di sviluppare
+smart contract.
 
 Solidity è un linguaggio di programmazione ad alto livello utilizzato per
 scrivere smart contract sulla blockchain Ethereum. Grazie a Solidity, gli
@@ -323,3 +327,170 @@ In questo esempio si possono vedere alcune parti fondamentali del codice:
         funzione non ritorni nulla, allora non si utilizza la keyword
         \textit{returns}.
 \end{itemize}
+
+Il codice mostrato nell'esempio è un semplice contratto che quando viene 
+richiamata la funzione \textit{helloworld()} ritorna la stringa "Hello World".
+
+Partendo da questo esempio, il codice che ho dovuto scrievere io è il seguente:
+\begin{lstlisting}[language=Solidity]
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract DocumentStore {
+    struct HashCode {
+        bytes32 value;
+        bool present;
+    }
+
+    mapping(string => HashCode) private data;
+
+    function addDocument(string calldata key, bytes32 hash_code) public view {
+        require(!data[key].present, "The document is already present");
+        data[key] = HashCode(hash_code, true);
+    }
+
+    function getDocumentHashCode(string calldata key) public view returns (bytes32) {
+        require(data[key].present, "The document is not stored yet");
+        return data[key].value;
+    }
+}
+\end{lstlisting}
+
+Questo codice non ha nulla di troppo complicato, ma è comunque necessario
+descrivere alcune peculiarità del linguaggio Solidity.\\
+Per prima cosa ho inserito uno struct che contiene due valori: il primo è il
+valore dell'hash del documento, mentre il secondo è un booleano che indica se
+il documento è presente o meno. Questo booleano è necessario perché, come si
+può vedere dalla funzione \textit{addDocument}, non è possibile inserire un
+valore in una mappa se questo è già presente. \\
+Provenendo da altri linguaggi di programmazione potrebbe venire naturale
+chiedersi perchè non abbia utilizzato un array e poi cercato se il valore fosse
+presente al suo interno. Questa decisione è stata presa a causa dei costi di
+esecuzione delle operazioni di ricerca all'interno di un array. Infatti, mentre
+la ricerca all'interno di una mappa ha un costo di esecuzione pari a $O(1)$, la
+ricerca all'interno di un array ha un costo di esecuzione pari a $O(n)$, dove
+$n$ è la lunghezza dell'array. Questo significa che, se il numero di documenti
+inseriti nella mappa dovesse diventare molto grande, il costo economico di 
+esecuzione aumenterebbe proporzionalmente in quanto ogni operazione all'interno
+della blockchain ha un costo in termini di gas fee (tasse di esecuzione).
+
+Il codice che avrei dovuto scrivere nel caso avessi dovuto utilizzare un array
+per memorizzare i documenti sarebbe stato il seguente:
+\begin{lstlisting}[language=Solidity]
+struct Document {
+    string key;
+    bytes32 hash_code;
+}
+
+Document[] private documents;
+
+function addDocument(string calldata key, bytes32 hash_code) public {
+    for (uint i = 0; i < documents.length; i++) {
+        require(documents[i].key != key, "The document is already present");
+    }
+    documents.push(Document(key, hash_code));
+}
+
+function getDocumentHashCode(string calldata key) public view returns (bytes32) {
+    for (uint i = 0; i < documents.length; i++) {
+        if (documents[i].key == key) {
+            return documents[i].hash_code;
+        }
+    }
+    revert("The document is not stored yet");
+}
+\end{lstlisting}
+
+Come si può notare in entrambi i casi ho dovuto iterare sugli elementi
+dell'array tramite un ciclo for e come detto prima questo porta a un costo in
+termini di risorse e di gas fee.
+
+\subsubsection{Integrazione Smart Contract con Processo}
+Avendo realizzato le due estremità del sistema, ovvero il processo e lo smart
+contract, ho dovuto integrarle tra di loro. Per fare ciò ho dovuto utilizzare
+un tool per C\# e applicativi .NET chiamato Nethereum. Questo tool permette di
+realizzare delle classi che fungono da wrapper per gli smart contract e che
+permettono di interagire con essi. In pratica basta inserire nel progetto
+il codice realizzato in Solidity nell'apposito file con estensione .sol e poi
+eseguire un comando che genera le classi wrapper. Queste classi sono
+realizzate in C\# e permettono di interagire con gli smart contract come se
+fossero delle normali classi. In particolare, per ogni smart contract viene
+generata una classe che ha lo stesso nome dello smart contract e che contiene
+tutte le funzioni e le variabili pubbliche dello smart contract. Per esempio,
+per il mio smart contract \texttt{DocumentStore} viene generata la classe
+\texttt{DocumentStoreService} che contiene tutte le funzioni e le variabili
+pubbliche di \texttt{DocumentStore}. Per utilizzare questa classe basta
+istanziarla e passare al costruttore l'indirizzo dello smart contract e
+l'istanza di Web3 che permette di interagire con la blockchain. In questo modo
+si ottiene un'istanza della classe che permette di interagire con lo smart
+contract. 
+
+\newpage
+
+I due codici che ho realizzato sono i seguenti:
+\begin{lstlisting}[language=CSharp]
+public async Task<byte[]> GetHashCodeFromSmartContract(string[] keyToSearch)
+{
+    if (keyToSearch.Length == 0)
+        throw new System.ArgumentException("No key to search found");
+
+    Web3 web3 = new Web3(_chainURL);
+    var contractHandler = web3.Eth.GetContractHandler(_smartContractAddress);
+
+    string key = ConcatStrings(keyToSearch);
+
+    var getDocumentFunction = new GetDocumentHashCodeFunction() { Key = key };
+
+    var returnValue = await contractHandler
+        .QueryAsync<GetDocumentHashCodeFunction,byte[]>(getDocumentFunction);
+
+    return returnValue;
+}
+\end{lstlisting}
+
+In questo codice si può vedere come viene utilizzata la classe generata
+automaticamente da Nethereum. In particolare, si può vedere come viene
+istanziata la classe \\ \texttt{GetDocumentHashCodeFunction} che rappresenta la
+funzione \texttt{getDocumentHashCode} dello smart contract. Questa classe
+viene istanziata passando come parametro la chiave da cercare. Questa classe
+viene poi passata al metodo \texttt{QueryAsync} che permette di eseguire la
+query sulla blockchain. Il metodo restituisce un oggetto di tipo
+\texttt{Task<byte[]>} che rappresenta il risultato della query.
+
+\begin{lstlisting}[language=CSharp]
+public async Task<TransactionReceipt> StoreDocumentToSmartContract(
+    string[] keyToStore,
+    byte[] hashCodeToStore
+)
+{
+    if (keyToStore.Length == 0)
+        throw new System.ArgumentException("No key to store found");
+    else if (hashCodeToStore.Length == 0) 
+        throw new System.ArgumentException("No hash code to store found");
+
+    Account account = new Account(_userPrivateKey, _chainID);
+    Web3 web3 = new Web3(account, _chainURL);
+
+    var contractHandler = web3.Eth.GetContractHandler(_smartContractAddress);
+
+    var addDocumentFunction = new AddDocumentFunction()
+    {
+        Key = ConcatStrings(keyToStore),
+        Hash_code = hashCodeToStore,
+    };
+
+    var addDocumentFunctionTxnReceipt = await contractHandler
+        .SendRequestAndWaitForReceiptAsync(addDocumentFunction);
+
+    return addDocumentFunctionTxnReceipt;
+}\end{lstlisting}
+
+Invece nel salvataggio del documento nello smart contract, si può vedere come
+viene istanziata la classe \texttt{AddDocumentFunction} che rappresenta la
+funzione \texttt{addDocument} dello smart contract. Questa classe viene
+istanziata passando come parametri la chiave e l'hash code del documento da
+salvare. Questa classe viene poi passata al metodo
+\texttt{SendRequestAndWaitForReceiptAsync} che permette di eseguire la
+transazione sulla blockchain. Il metodo restituisce un oggetto di tipo
+\texttt{Task<TransactionReceipt>} che rappresenta il risultato della
+transazione.
