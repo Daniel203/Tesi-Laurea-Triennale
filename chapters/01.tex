@@ -404,6 +404,20 @@ function getDocumentHashCode(string calldata key) public view returns (bytes32) 
 Come si può notare in entrambi i casi ho dovuto iterare sugli elementi
 dell'array tramite un ciclo for e come detto prima questo porta a un costo in
 termini di risorse e di gas fee.
+\bigbreak
+Un altro punto degno di attenzione del codice è la keyword \texttt{calldata}
+all'interno della definiione dei parametri delle funzioni. Esistono due tipi
+principali di keyword per i parametri di una funzione: \texttt{memory}, e
+\texttt{calldata}. \\ 
+La loro differenza è il fatto che \texttt{memory} è un'area di memoria
+temporanea dove vengono salvati i dati durante l'esecuzione di una funzione,
+mentre \texttt{calldata} è un'area di memoria in sola lettura dove vengono
+salvati i dati che vengono passati alla funzione. \\
+Il vantaggio di usare \texttt{calldata} è che essendo il dato in sola lettura 
+non porta a nessun costo in termini di gas feei, in quanto se ad esempio un 
+dato di tipo memory viene passato ad un ulteriore funzione questo viene
+interamente copiato in memoria, mentre se viene passato un dato di tipo
+\texttt{calldata} questo viene passato per riferimento.
 
 \subsubsection{Integrazione Smart Contract con Processo}
 Avendo realizzato le due estremità del sistema, ovvero il processo e lo smart
@@ -424,8 +438,6 @@ istanziarla e passare al costruttore l'indirizzo dello smart contract e
 l'istanza di Web3 che permette di interagire con la blockchain. In questo modo
 si ottiene un'istanza della classe che permette di interagire con lo smart
 contract. 
-
-\newpage
 
 I due codici che ho realizzato sono i seguenti:
 \begin{lstlisting}[language=CSharp]
