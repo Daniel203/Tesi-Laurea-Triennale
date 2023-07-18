@@ -344,7 +344,7 @@ contract DocumentStore {
 
     mapping(string => HashCode) private data;
 
-    function addDocument(string calldata key, bytes32 hash_code) public view {
+    function addDocument(string calldata key, bytes32 hash_code) public {
         require(!data[key].present, "The document is already present");
         data[key] = HashCode(hash_code, true);
     }
@@ -421,7 +421,7 @@ interamente copiato in memoria, mentre se viene passato un dato di tipo
 
 \subsubsection{Integrazione Smart Contract con Processo}
 Avendo realizzato le due estremità del sistema, ovvero il processo e lo smart
-contract, ho dovuto integrarle tra di loro. Per fare ciò ho dovuto utilizzare
+contract, ho dovuto integrarle tra di loro. Per fare ciò ho utilizzato
 un tool per C\# e applicativi .NET chiamato Nethereum. Questo tool permette di
 realizzare delle classi che fungono da wrapper per gli smart contract e che
 permettono di interagire con essi. In pratica basta inserire nel progetto
@@ -506,3 +506,8 @@ salvare. Questa classe viene poi passata al metodo
 transazione sulla blockchain. Il metodo restituisce un oggetto di tipo
 \texttt{Task<TransactionReceipt>} che rappresenta il risultato della
 transazione.
+
+Ora che anche la comunicazione tra le due parti è stata realizzata,
+il progetto è stato testato per vedere che tutto funzionasse come previsto, 
+rimaneva solo da valutare se fosse possibile vendere questo prodotto 
+all'interno del pacchetto del gestionale già presente.
