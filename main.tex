@@ -3,9 +3,13 @@
 \usepackage[a4paper, total={6in, 9in}]{geometry}
 \usepackage[colorinlistoftodos]{todonotes}
 
+\usepackage[italian]{babel}
+
 \usepackage{float}
 \usepackage{hyperref}
 \usepackage{caption}
+
+\usepackage{parskip}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -13,6 +17,7 @@
 \usepackage{listings}
 \input{packages/solidity-highlighting.tex}
 \input{packages/csharp-highlighting.tex}
+
 
 \title{Tesi laurea triennale}
 \author{Daniel Arduini}
@@ -23,9 +28,11 @@
 \maketitle
 \tableofcontents
 
-
 \newpage
 \input{chapters/01}
-
+\newpage
+\input{chapters/02}
+\newpage
+\input{chapters/03}
 
 \end{document}
