@@ -116,8 +116,6 @@ Le interfacce che sono state create sono le seguenti:
     \item \textbf{getHashCode(...)}: per ottenere l'hash-code di un file.
 \end{itemize}
 
-\newpage
-
 \subsection{Struttura del progetto}
 Il gestionale su cui ho dovuto lavorare si divideva principalmente in due parti
 logiche separate:
@@ -280,8 +278,6 @@ visualizzare i costi effettivi del deploy e delle transazioni, oltre ad avere
 già installate tutte le versioni del compilatore e del debugger, in modo 
 da poterli cambiare velocemente e senza doverli scaricare.
 
-\newpage
-
 Il codice Solidity è contenuto in un file con estensione \textit{.sol} ed
 è composto come segue:
 \begin{lstlisting}[language=Solidity]
@@ -331,6 +327,8 @@ In questo esempio si possono vedere alcune parti fondamentali del codice:
 Il codice mostrato nell'esempio è un semplice contratto che quando viene 
 richiamata la funzione \textit{helloworld()} ritorna la stringa "Hello World".
 
+\newpage
+
 Partendo da questo esempio, il codice che ho dovuto scrievere io è il seguente:
 \begin{lstlisting}[language=Solidity]
 // SPDX-License-Identifier: MIT
@@ -373,6 +371,8 @@ $n$ è la lunghezza dell'array. Questo significa che, se il numero di documenti
 inseriti nella mappa dovesse diventare molto grande, il costo economico di 
 esecuzione aumenterebbe proporzionalmente in quanto ogni operazione all'interno
 della blockchain ha un costo in termini di gas fee (tasse di esecuzione).
+
+\newpage
 
 Il codice che avrei dovuto scrivere nel caso avessi dovuto utilizzare un array
 per memorizzare i documenti sarebbe stato il seguente:
@@ -469,6 +469,8 @@ viene poi passata al metodo \texttt{QueryAsync} che permette di eseguire la
 query sulla blockchain. Il metodo restituisce un oggetto di tipo
 \texttt{Task<byte[]>} che rappresenta il risultato della query.
 
+\newpage
+
 \begin{lstlisting}[language=CSharp]
 public async Task<TransactionReceipt> StoreDocumentToSmartContract(
     string[] keyToStore,
@@ -501,7 +503,7 @@ Invece nel salvataggio del documento nello smart contract, si può vedere come
 viene istanziata la classe \texttt{AddDocumentFunction} che rappresenta la
 funzione \texttt{addDocument} dello smart contract. Questa classe viene
 istanziata passando come parametri la chiave e l'hash code del documento da
-salvare. Questa classe viene poi passata al metodo
+salvare. Questa classe viene poi passata al metodo \\
 \texttt{SendRequestAndWaitForReceiptAsync} che permette di eseguire la
 transazione sulla blockchain. Il metodo restituisce un oggetto di tipo
 \texttt{Task<TransactionReceipt>} che rappresenta il risultato della
@@ -547,4 +549,3 @@ ha permesso di approfondire le conoscenze su questa tecnologia. Inoltre, la
 sperimentazione di paradigmi nuovi porta sempre ad effettuare un'analisi degli
 attuali problemi in cerca di soluzioni più efficaci e questo non può che essere
 un bene per l'azienda.
-
