@@ -28,10 +28,9 @@ anche se un solo carattere della stringa di partenza viene modificato, quindi è
 facile intuire che se un blocco cambia hash code, allora sicuramente è stato
 mutato.
 
-Ogni computer all'interno della rete blockchain è chiamato \textbf{nodo} e
-si occupa di verificare che i blocchi siano validi e di aggiungerli alla
-catena, in questo modo la catena non è presente su un solo computer, ma è 
-\textbf{distribuita} su tutti i nodi della rete.
+Ogni computer all'interno della rete è chiamato \textbf{nodo} e tiene in 
+memoria una copia della rete completa. Questo permette alla tecnologia di 
+essere distribuita e decentralizzata, in quanto non esiste un server centrale.
 
 Le operazioni che vengono svolte all'interno di questa struttura sono chiamate
 \textbf{transazioni} e sono salvate all'interno dei blocchi.
@@ -42,6 +41,33 @@ analizzare in dettaglio il funzionamento di questa tecnologia.
 \newpage
 
 \subsection{Come funziona?}
+In questo capitolo andremo ad analizzare il funzionamento di una blockchain,
+spiegando i vari passaggi che la contraddistinguono. Prenderemo come
+riferimento la blockchain Ethereum in quanto è quella che verrà utilizzata
+nell'esempio pratico, tuttavia la maggior parte dei concetti è applicabile 
+a tutte le altre blockchain.
+
+\subsubsection{Transazione}
+Una transazione, come detto prima, è un'operazione svolta da un utente
+all'interno della blockchain. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{TransactionSchema.png} 
+    \caption{Cambio di stato con transazione}
+    \label{fig:transactionSchema}
+\end{figure}
+
+Le transazioni che modificano lo stato della struttura devono essere notificate
+a tutti gli utenti che vi partecipano. Per fare ciò si utilizza un sistema di
+notifiche chiamato \textbf{broadcast} che permette di inviare un messaggio a
+tutti i nodi della rete, in questo modo ogni nodo può mandare una richiesta di
+esecuzione di una transazione a tutti e in seguito un validatore la eseguirà e
+propagherà il cambiamento di stato su tutta la rete. \\
+Le transazioni una volta eseguite vengono salvate all'interno di un blocco che
+verrà poi aggiunto alla catena.
+
+\subsubsection{Blocco}
 La blockchain è per certi versi simile a un database, ossia il suo scopo è
 salvare dati di vario tipo, ma ciò che li differenzia è il modo in cui i dati
 vengono salvati. \\ 
@@ -85,3 +111,147 @@ modificato e quindi il suo hash code è cambiato. Questo ha portato alla
 invalidazione della catena in quanto il blocco 3 non ha più come hash del
 blocco precedente quello del blocco 2.
 
+\subsubsection{Ethereum Virtual Machine (EVM)}
+Nella blockchain di Ethereum c'è un solo computer che ha uno stato a cui
+ogni partecipante della rete deve fare riferimento. Ogni partecipante ne tiene
+una copia e ha inoltre la possibilità di richiedere al computer principale di
+eseguire delle operazioni. Quando questa richiesta viene avanzata, altri
+nodi della rete si prendono in carico l'operazione e la verificano, validano ed
+eseguono notificando poi agli altri ciò che è avvenuto.
+Ogni operazione porta al cambiamento dello stato della EVM, e quando ciò
+avviene, il nuovo stato viene aggiornato su tutti i nodi della rete. \\
+Questo modello di \textbf{macchina a stati distribuita} permette l'esistenza
+degli smart contract, ossia dei programmi scritti dagli utenti che possono
+essere eseguiti all'interno della blockchain. Questa caratteristica differenzia
+la blockchain di Ethereum da quella di Bitcoin in quanto quest'ultima non
+permette l'esecuzione di programmi, limitando di molto le possibilità di
+utilizzo della rete.
+\newpage
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{EVMSchema.png} 
+    \caption{Ethereum Virtual Machine}
+    \label{fig:EVM}
+\end{figure}
+
+Lo schema \ref{fig:EVM} mostra che la EVM ha uno stato globale che è immutabile
+ed è quello su cui tutti devono fare riferimento, ma poi ogni singola macchina
+ha il suo stato locale che può essere modificato e poi in caso notificato alle
+altre macchine.
+
+Il cambio di stato si comporta come una funzione matematica, ossia dato un
+input restituisce un output in modo deterministico. In modo più formale 
+possiamo descrivere la funzione come segue:
+\begin{equation}
+    \label{eq:stateChange}
+    S_{t+1} = \Upsilon(S_t, T)
+\end{equation}
+
+Dato uno stato $S_t$ e una transazione $T$ viene restituito un nuovo stato
+$\S_{t+1}$.
+
+\subsubsection{Gas fee}
+\textbf{Gas} si riferisce all'unità che misura la quantità di sforzo computazionale
+richiesto per eseguire operazioni specifiche sulla rete Ethereum. \\
+Poiché ogni transazione di Ethereum richiede risorse computazionali per essere
+eseguita, tali risorse devono essere pagate per garantire che Ethereum non sia
+vulnerabile allo spam e non si blocchi in loop computazionali infiniti. Il
+pagamento per la computazione avviene sotto forma di tassa sul gas. \\
+\textbf{Gas fee} è la quantità di gas necessaria per eseguire una transazione
+moltiplicata per il prezzo di un singolo gas. Il prezzo del gas è espresso in
+\textbf{gwei}, che è un sottomultiplo di un ether (1 gwei = $10^{-9}$ ETH).
+
+\textbf{Come vengono calcolate le gas fee?} \\
+È possibile impostare la quantità di gas che si è disposti a pagare quando si
+invia una transazione. Offrendo una certa quantità di gas, si fa un'offerta per
+includere la transazione nel blocco successivo. Se si offre troppo poco, è meno
+probabile che i validatori scelgano la transazione per l'inclusione, il che
+significa che la transazione potrebbe essere eseguita in ritardo o non essere
+eseguita affatto. Se si offre troppo, c'è il rischio di sprecare un po' di ETH.
+
+Il costo totale in gas che si deve pagare è diviso in due parti: 
+\textit{base fee} e \textit{priority fee (tip)}. \\
+La \textbf{base fee} è la quantità richiesta dal protocollo che bisogna pagare
+per poter ritenere l'operazione valida. La \textbf{priority fee} è la quantità
+di gas che si offre in più per far eseguire la transazione prima di altre. \\
+Per esempio, se si vuole inviare una transazione che richiede 21.000 gas, la
+\textit{base fee} è di 10gwei e si offre 1 gwei come \textit{priority fee},
+allora il costo totale sarà: 
+\begin{center}
+units of gas used * (base fee + priority fee)
+\end{center}
+\begin{equation}
+    \label{eq:gasFee}
+    21.000 * (10 + 1) = 0.000021 ETH
+\end{equation}
+
+\subsubsection{Ether}
+Abbiamo visto che le gas fee vengono pagate in ETH, ma cos'è l'ETH? \\
+\textbf{Ether} (o ETH) è la criptovaluta nativa della blockchain di Ethereum, ciò
+significa che gli scambi di moneta all'interno di questa struttura avvengono
+con questa valuta. \\
+Gli Ether vengono creati come ricompensa per l'azione di proposta e validazione
+di un nuovo blocco. L'importo emesso dipende dal numero di validatori e dalla
+quantità di Ether che hanno depositato nei loro portafogli digitali. \\
+Di solito 1/8 del valore viene destinato a chi ha proposto il blocco e il resto
+viene suddiviso tra i validatori. \\
+Ovviamente, per evitare il deprezzamento dovuto a inflazione, alcuni Ether 
+devono anche essere eliminati, per questo motivo quando un utente effettua
+una transazione, la \textit{base fee}, il cui valore viene impostato dalla
+rete in base alla domanda, viene eliminata.
+
+
+\subsubsection{Meccanismo del consenso}
+Il termine meccanismo di consenso si riferisce all'intera serie di protocolli,
+incentivi e idee che consentono a una rete di nodi di concordare lo stato di
+una blockchain. \\
+Ci sono due tipi di meccanismi di consenso: 
+\begin{itemize}
+    \item \textbf{Proof of Work (PoW)}
+    \item \textbf{Proof of Stake (PoS)}
+\end{itemize}
+
+\textbf{Proof of Work} \\
+Questo meccanismo viene utilizzato all'interno della blockchain di Bitcoin e
+veniva utilizzato anche in quella di Ethereum prima del passaggio a Proof of
+Stake. Si basa sul concetto di \textbf{mining}, ossia il lavoro svolto per
+aggiungere un blocco valido all'interno della catena3 
+\begin{itemize}
+    \item \textbf{Nuovi blocchi:} I minatori competono per creare nuovi
+        blocchi pieni di transazioni elaborate. Il vincitore condivide il nuovo
+        blocco con il resto della rete e guadagna alcune criptovalute appena
+        coniate (ad esempio BTC nella blockchain Bitcoin). La gara è vinta dal
+        computer che riesce a risolvere più velocemente un puzzle matematico e
+        la soluzione di questo puzzle è il lavoro di "proof-of-work". Questo
+        produce il collegamento crittografico tra il blocco corrente e quello
+        precedente. 
+    \item \textbf{Sicurezza:} La rete è sicura grazie al fatto che servono il
+        51\% della potenza di calcolo totale della rete per poter alterare la
+        catena, una quantità di risorse ed energia talmente grande che rende
+        assolutamente nulli i possibili benefici di un attacco.
+\end{itemize}
+
+\newpage
+
+\textbf{Proof of Stake} \\
+Meccanismo utilizzato in questo momento da Ethereum, in cui i validatori sono
+solo nodi che hanno depositato una certa quantità di ETH (in questo momento 32
+ETH). 
+\begin{itemize}
+    \item \textbf{Nuovi blocchi:} I validatori vengono scelti in modo casuale
+        basandosi sulla quantità di ETH che hanno depositato. Una volta scelti
+        creano un nuovo blocco e lo condividono con il resto della rete,
+        ricevendo una ricompensa per il loro lavoro oppure una sanzione
+        economica in caso di comportamento scorretto, come ad esempio la
+        distruzione di una parte o la totalità degli ETH salvati nel
+        portafoglio.
+    \item \textbf{Sicurezza:} La rete è sicura perché nel caso un attaccante
+        volesse commettere un'azione malevole, metterebbe a rischio gran parte
+        dei suoi ETH e quindi molto spesso non è conveniente.
+\end{itemize}
+
+\subsubsection{Smart Contract}
+Uno smart contract è un programma che gira sulla blockchain di Ethereum. È una
+raccolta di codice (le sue funzioni) e di dati (il suo stato) che risiede a un
+indirizzo specifico sulla blockchain di Ethereum.
