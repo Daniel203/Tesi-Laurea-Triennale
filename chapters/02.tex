@@ -111,6 +111,50 @@ modificato e quindi il suo hash code è cambiato. Questo ha portato alla
 invalidazione della catena in quanto il blocco 3 non ha più come hash del
 blocco precedente quello del blocco 2.
 
+\subsubsection{Account}
+Un account è un'entità all'interno della blockchain che ha un saldo in ETH e
+che ha la possibilità di eseguire transazioni. Esistono due tipi di account:
+\textbf{Externally-Owned-Account (EOA)} che è un account che può essere gestito
+da chiunque abbia la chiavi private e \textbf{Contract Account} che è uno smart
+contract all'interno della rete, può essere gestito solo dal codice.
+
+Entrambi i tipi di account possono eseguire operazioni di scambio moneta 
+in valuta (ETH) e possono interagire con gli smart contract, ma ci sono delle 
+differenze tra i due:
+
+\begin{itemize}
+    \item \textbf{EOA:} creare un account non ha un costo e le operazioni che 
+        si possono eseguire sono solo transazioni e scambi di ETH. Sono 
+        composti da una coppia di chiavi criptografiche, una 
+        pubblica e una privata, che permettono di controllare le attività
+        dell'account.
+    \item \textbf{Contract Account:} la creazione dell'account ha un costo
+        in quanto c'è bisogno di caricare il codice dello smart contract
+        all'interno della blockchain. Possono eseguire transazioni solo in 
+        risposta a richieste ricevute e le azioni eseguite sono quelle definite
+        all'interno del codice. Non hanno chiavi come gli account EOA
+\end{itemize}
+
+Ogni account ha una serie di elementi al suo interno:
+\begin{itemize}
+    \item \textbf{nonce:} valore che conta il numero di transazioni eseguite
+        per un EOA, oppure il numero di contratti creati per un contract
+        account. Solo una transazione con un certo nonce può essere eseguito
+        da un account, questo aiuta la protezione da attacchi di ripetizione.
+    \item \textbf{balance} il numero di ETH che l'account possiede
+    \item \textbf{codeHash:} il codice dell'account che viene anche salvato 
+        all'interno della EVM. Non può essere in nessun modo modificato.
+    \item \textbf{storageRoot} l'hash code che punta al nodo contenente lo 
+        storage per l'account.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{AccountSchema.png} 
+    \caption{Account}
+    \label{fig:Account}
+\end{figure}
+
 \subsubsection{Ethereum Virtual Machine (EVM)}
 Nella blockchain di Ethereum c'è un solo computer che ha uno stato a cui
 ogni partecipante della rete deve fare riferimento. Ogni partecipante ne tiene
@@ -126,7 +170,6 @@ essere eseguiti all'interno della blockchain. Questa caratteristica differenzia
 la blockchain di Ethereum da quella di Bitcoin in quanto quest'ultima non
 permette l'esecuzione di programmi, limitando di molto le possibilità di
 utilizzo della rete.
-\newpage
 
 \begin{figure}[H]
     \centering
@@ -201,7 +244,6 @@ devono anche essere eliminati, per questo motivo quando un utente effettua
 una transazione, la \textit{base fee}, il cui valore viene impostato dalla
 rete in base alla domanda, viene eliminata.
 
-
 \subsubsection{Meccanismo del consenso}
 Il termine meccanismo di consenso si riferisce all'intera serie di protocolli,
 incentivi e idee che consentono a una rete di nodi di concordare lo stato di
@@ -232,8 +274,6 @@ aggiungere un blocco valido all'interno della catena3
         assolutamente nulli i possibili benefici di un attacco.
 \end{itemize}
 
-\newpage
-
 \textbf{Proof of Stake} \\
 Meccanismo utilizzato in questo momento da Ethereum, in cui i validatori sono
 solo nodi che hanno depositato una certa quantità di ETH (in questo momento 32
@@ -253,5 +293,146 @@ ETH).
 
 \subsubsection{Smart Contract}
 Uno smart contract è un programma che gira sulla blockchain di Ethereum. È una
-raccolta di codice (le sue funzioni) e di dati (il suo stato) che risiede a un
-indirizzo specifico sulla blockchain di Ethereum.
+raccolta di \textit{codice} (le sue funzioni) e di \textit{dati} (il suo stato)
+che risiede ad un indirizzo specifico sulla blockchain di Ethereum. \\
+I contratti intelligenti sono un tipo di conto Ethereum, ciò significa che
+hanno un saldo e possono essere oggetto di transazioni, tuttavia non sono
+controllati da un utente, ma vengono distribuiti sulla rete ed eseguiti come
+programmato. Gli account utente possono quindi interagire con uno smart
+contract inviando transazioni che eseguono una funzione definita nello in esso.
+Gli smart contract possono definire regole, come un normale contratto,
+e applicarle automaticamente tramite il codice e le interazioni con essi sono
+irreversibili. \\
+Uno smart contract può essere scritto da chiunque tramite i linguaggi di
+programmazione \textbf{Solidity} o \textbf{Vyper} e può essere eseguito da
+chiunque abbia accesso alla blockchain di Ethereum. \\
+La loro principale differenza rispetto a un programma sviluppato per esempio in
+Java è che lo smart contract non può accedere a dati che non siano presenti
+nella blockchain, quindi non può leggere dati dallo standard input o scrivere
+dati sullo standard output, non può effettuare chiamate http o accedere a
+database esterni. Questa scelta è stata fatta perché tutti i nodi devono poter
+condividere e validare le informazioni, quindi devono essere in grado di
+eseguire lo stesso codice e ottenere lo stesso risultato.
+
+Durante il proseguo della tesi verrà utilizzato come linguaggio \textit{Solidity}
+per la scrittura degli smart contract. Di seguito un esempio di codice:
+
+\newpage
+
+\begin{lstlisting}[language=Solidity]
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SimpleStorage {
+    string public text;
+
+    function set(string calldata _text) external {
+        text = _text;
+    }
+
+    function get() external view returns (string memory) {
+        return text;
+    }
+}
+\end{lstlisting}
+
+Per il momento non ci interessa sapere a  cosa serve ogni componente di questo 
+codice, ci basta capire che è un contratto che permette di salvare una stringa
+e di leggerla. 
+
+\subsection{Approfondimento di Solidity}
+Per capire meglio i capitoli successivi di questa tesi, è necessario fare un
+approfondimento sul linguaggio Solidity, in particolare sulla gestione della 
+memoria.
+
+\subsubsection{Memory e Storage}
+Quando vengono dichiarate delle variabili all'interno di uno smart contract, si
+può decidere dove salvare i dati, in \textit{memory} o in \textit{storage}, 
+questo perchè le operazioni in blockchain hanno sempre un costo e spesso elevato,
+qundi questa possibilità aiuta gli sviluppatori a gestire la parte economica
+relativa alla scrittura e lettura dei dati. 
+
+\textbf{Storage} \\
+I dati persistenti sono rappresentati dalle variabili di stato e questi dati
+vengono salvati direttamente sulla blockchain in modo permanente. È neccessario
+dichiarare il tipo della variabile in quanto lo smart contract ha bisogno
+di sapere quanto spazio allocare in fase di compilazione.
+\begin{lstlisting}[language=Solidity]
+contract SimpleStorage {
+    uint storedData; // State variable
+    // ...
+}
+\end{lstlisting}
+
+\textbf{Memory} \\
+Sono i dati temporanei che esistono per la durata dell'esecuzione di una
+funzione all'interno dello smart contract. Dato che non vengono salvati in modo
+permanente, sono molto più economici da utilizzare rispetto a quelli di stato.
+
+\begin{lstlisting}[language=Solidity]
+contract SumCalculator {
+    function sum(uint256 _num1, uint256 _num2) public returns (uint256) {
+        uint256 memory result = _num1 + _num2;
+        return result;
+    }
+}
+\end{lstlisting}
+
+Come si può vedere dal codice, la variabile \textit{result} è stata dichiarata
+come variabile di memoria tramite la keyword \textit{memory} e quindi il valore
+verrà cancellato non appena la funzione finirà l'esecuzione. 
+La parola \textit{memory} in quseto caso poteva anche essere evitata in quanto 
+implicita, ma è stata inserita per chiarezza. 
+
+\subsubsection{Salvataggio dati di grandezza dinamica (Storage)}
+Una domanda che può sorgere spontanea è: \textit{Come si fa a salvare dati di
+grandezza dinamica in modo permanente?} \\
+Se per esempio instanziamo un \textit{mapping} (l'equivalente di un hashmap)
+come quello mostrato di seguito, non possiamo sapere a priori quanti elementi
+saranno inseriti e quindi non possiamo sapere quanto spazio allocare in fase di
+compilazione.
+
+\begin{lstlisting}[language=Solidity]
+pragma solidity ^0.8.0;
+
+contract MappingExample {
+    mapping(address => uint256) public balances;
+
+    function setBalance(uint256 amount) public {
+        balances[msg.sender] = amount;
+    }
+
+    function getBalance() public view returns (uint256) {
+        return balances[msg.sender];
+    }
+}
+\end{lstlisting}
+
+Ogni smart contract ha accesso alla memoria permanente che può essere pensata
+come se fosse un array in cui ogni elemento è di lunghezza \textbf{32 byte} e
+l'array ha lunghezza \textbf{2\textsuperscript{256}}. Nonostante questo modello
+mentale ci aiuti a capire la grandezza della memoria, dobbiamo ricordare che in
+realtà la memoria è sparsa e popolata in modo casuale e il metodo di accesso
+utilizza una struttura a \textbf{chiave/valore}. Tutte le celle non utilizzate
+sono riempite con uno zero, che a differenza di quello che potremmo pensare,
+non occupa nessuno spazio e non serve allocare memoria per esso grazie alla
+struttura dati utilizzata che si chiama \textbf{Merkle Patricia Trie}. \\
+Ovviamente, per quanto possa sembrare che con uno smart contract si possa 
+salvare una quantità di dati praticamente infinita, bisogna ricordare che 
+l'aggiunta di ogni dato ha un costo e questo disincentiva all'utilizzo massivo
+di questo metodo di storage.
+
+\subsection{Applicazioni nel mondo reale}
+La blockchain è una tecnologia che ha preso molto piede negli ultimi anni e 
+un esempio pratico di questa espansione lo troviamo nel mondo dell'automotive
+con Alfa Romeo. Infatti con il lancio della Alfa Romeo Tonale è stata introdotto
+un servizio basato sulla blockchain che permette di registrare tutti i dati del
+veicolo per poi creare un certificato che può essere utilizzato come garanzia 
+dello stato generale dell'automobile. \\
+Questa applicazione dimostra tutti i punti di forza di questa tecnologia, ossia
+il fatto che i dati non possano essere modificati e che siano accessibili da
+tutti rende il dato salvato nella rete un dato di valore e di fiducia. Inoltre, 
+in questo caso specifico vengono anche utilizzati gli \textbf{NFT} che sono
+dei certificati digitali sempre basati sulla blockchain che servono appunto
+come atto di garanzia rispetto ad un bene, sia fisico che digitale.
+
