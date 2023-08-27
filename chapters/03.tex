@@ -1,6 +1,7 @@
-\section{Stage}
+\chapter{Progetto}
+\label{cha:stage}
 
-\subsection{Analisi dei requisiti}
+\section{Analisi dei requisiti}
 L'azienda in cui ho svolto l'attività di stage universitario opera
 principalmente nel settore assicurativo producendo gestionali per
 semplificare l'amministrazione degli utenti, delle scadenze delle polizze,
@@ -23,7 +24,7 @@ Per quanto riguarda l'autenticità invece viene utilizzata una firma digitale
 che viene apposta sul file, in questo modo è possibile verificare che il file
 sia stato firmato da una persona autorizzata e che quindi sia autentico. 
 
-\subsubsection{Problemi da risolvere}
+\subsection{Problemi da risolvere}
 Il sistema utilizzato dall'azienda è abbastanza solido e viene utilizzato da
 anni, tuttavia si è cercato un modo per migliorarlo e renderlo più sicuro e
 affidabile. \\
@@ -36,7 +37,7 @@ in modo da rendere il file integro. \\
 Serviva trovare un modo per garantire in modo trasparente al cliente che
 l'hash-code salvato non potesse essere in nessun modo modificato.
 
-\subsubsection{Soluzioni proposte}
+\subsection{Soluzioni proposte}
 Sono state proposte varie soluzioni tra cui quella di salvare in molteplici
 database l'hash-code in modo da rendere più difficile la modifica, oppure
 quella di salvare l'hash-code in un database esterno ad esempio online,
@@ -51,8 +52,7 @@ tecnologia blockchain per risolvere il problema.
 
 \newpage
 
-\subsection{Soluzione: Blockchain}
-\subsubsection{Introduzione}
+\section{Soluzione: Blockchain}
 La blockchain è una tecnologia che permette di salvare dati in modo sicuro e
 affidabile, in particolare i dati vengono salvati in blocchi che vengono poi
 concatenati tra loro in modo da formare una catena, da qui il nome
@@ -67,7 +67,10 @@ utenti possano accedervi. Ogni utente ha una copia della blockchain e può
 verificare che i dati siano corretti e che non siano stati modificati e questo
 garantisce la trasparenza del sistema.
 
-\subsubsection{Quali dati salvare}
+Per un approfondimento della tecnologia, si può consultare il capitolo
+\ref{cha:blockchain}.
+
+\subsection{Quali dati salvare}
 La blockchain è una tecnologia molto potente e versatile, ma non è adatta a
 qualsiasi tipo di dato, infatti è stata progettata per salvare transazioni
 di denaro e non per salvare file. \\
@@ -82,7 +85,7 @@ garantire l'integrità del file.
 Quindi il processo utilizzato in precedenza viene preservato, ma serviva 
 solamente cambiare il modo in cui viene salvato il codice di verifica.
 
-\subsubsection{Come interagire con la blockchain}
+\subsection{Come interagire con la blockchain}
 La tecnologia della blockchain è sembrata fin da subito una buona soluzione, 
 ora serviva trovare un modo per integrarla con il sistema già esistente in 
 modo da non alterare l'utilizzo del programma da parte degli utenti finali.
@@ -93,7 +96,7 @@ già esistente che salvava sul database.
 Tuttavia serviva capire come creare un punto d'accesso dal lato blockchain
 a cui poter inviare le richieste.
 
-\subsubsection{Smart Contract}
+\subsection{Smart Contract}
 Alcune blockchain come Ethereum permettono di creare degli smart contracts,
 ovvero dei programmi che vengono eseguiti all'interno della blockchain e che
 possono interagire con essa. \\
@@ -107,7 +110,11 @@ La caratteristica di questa tecnologia è che gli smart contracts sono dei
 contratti senza intermediari che vengono eseguiti in modo automatico e senza 
 nessun supervisore umano, quindi potenzialmente potrebbero essere utilizzate
 per stipulare, ad esempio, delle polizze assicurative totalmente gestite
-da sistemi informatici. Nel nostro caso bastava questa caratteristica non è
+da sistemi informatici. 
+
+Approfondimenti sugli smart contracts nel capitolo \ref{cha:smart-contract}.
+
+Nel nostro caso bastava questa caratteristica non è
 stata necessaria in quanto dovevamo solo salvare dei dati.
 Le interfacce che sono state create sono le seguenti:
 \begin{itemize}
@@ -116,7 +123,9 @@ Le interfacce che sono state create sono le seguenti:
     \item \textbf{getHashCode(...)}: per ottenere l'hash-code di un file.
 \end{itemize}
 
-\subsection{Struttura del progetto}
+\newpage
+
+\section{Struttura del progetto}
 Il gestionale su cui ho dovuto lavorare si divideva principalmente in due parti
 logiche separate:
 \begin{itemize}
@@ -133,7 +142,7 @@ Il resto del codice non aveva bisogno di essere modificato in quanto il tutto
 era già utilizzato per mandare i documenti e gli hash-code al database, quindi
 abbiamo solo dovuto modificare il processo che salva il codice di verifica.
 
-\subsubsection{Analisi struttura del codice}
+\subsection{Analisi struttura del codice}
 Dovendo lavorare solo sulla parte dei processi, ho dovuto analizzare il codice
 per capire come funzionava e come potevo integrare la blockchain. \\
 Il progetto sostanzialmente contiene una serie di classi che contengono la
@@ -147,6 +156,8 @@ tramite chiamate http e per poter eseguire operazioni sul database.
     \caption{Struttura del progetto di gestione dei processi}
     \label{fig:process-manager-project-components}
 \end{figure}
+
+\newpage
 
 Come si può vedere dalla figura \ref{fig:process-manager-project-components} il
 progetto ha quattro parti fondamentali:
@@ -176,7 +187,7 @@ progetto ha quattro parti fondamentali:
         operazioni sul database, oppure di comunicare con altri servizi.
 \end{itemize}
 
-\subsubsection{Analisi funzionamento dei processi}
+\subsection{Analisi funzionamento dei processi}
 La maggior parte dei processi implementati dal software funzionano tramite la
 logica di una coda di richieste (FIFO).
 
@@ -223,8 +234,8 @@ l'interfaccia grafica, allora viene inserito dal programma una nuova richiesta
 nella tabella con i dati necessari a far funzionare il processo di
 conservazione.
 
-\subsection{Implementazione}
-\subsubsection{Processo BCH}
+\section{Implementazione}
+\subsection{Processo BCH}
 Per sviluppare questo progetto ho dovuto per prima cosa creare un mio processo
 e il relativo codice-processo nel file di configurazione. Al processo è stato
 assegnato il codice BCH (che identifica il salvataggio su blockchain) e il
@@ -247,7 +258,7 @@ Al processo vengono passati i seguenti valori:
 Ora che il processo è stato creato, ho dovuto creare il codice che si occupa
 di interagire con la blockchain, il punto focale di questo progetto. 
 
-\subsubsection{Smart Contract}
+\subsection{Smart Contract}
 Per poter sviluppare questa parte ho utilizzato il linguaggio Solidity,
 un linguaggio realizzato da Ethereum appositamente con lo scopo di sviluppare
 smart contract.
@@ -419,7 +430,7 @@ dato di tipo memory viene passato ad un ulteriore funzione questo viene
 interamente copiato in memoria, mentre se viene passato un dato di tipo
 \texttt{calldata} questo viene passato per riferimento.
 
-\subsubsection{Integrazione Smart Contract con Processo}
+\subsection{Integrazione Smart Contract con Processo}
 Avendo realizzato le due estremità del sistema, ovvero il processo e lo smart
 contract, ho dovuto integrarle tra di loro. Per fare ciò ho utilizzato
 un tool per C\# e applicativi .NET chiamato Nethereum. Questo tool permette di
@@ -438,6 +449,8 @@ istanziarla e passare al costruttore l'indirizzo dello smart contract e
 l'istanza di Web3 che permette di interagire con la blockchain. In questo modo
 si ottiene un'istanza della classe che permette di interagire con lo smart
 contract. 
+
+\newpage
 
 I due codici che ho realizzato sono i seguenti:
 \begin{lstlisting}[language=CSharp]
@@ -468,8 +481,6 @@ viene istanziata passando come parametro la chiave da cercare. Questa classe
 viene poi passata al metodo \texttt{QueryAsync} che permette di eseguire la
 query sulla blockchain. Il metodo restituisce un oggetto di tipo
 \texttt{Task<byte[]>} che rappresenta il risultato della query.
-
-\newpage
 
 \begin{lstlisting}[language=CSharp]
 public async Task<TransactionReceipt> StoreDocumentToSmartContract(
@@ -514,25 +525,42 @@ il progetto è stato testato per vedere che tutto funzionasse come previsto,
 rimaneva solo da valutare se fosse possibile vendere questo prodotto 
 all'interno del pacchetto del gestionale già presente.
 
-\subsection{Analisi prodotto}
+\section{Analisi prodotto}
 Una volta terminato il progetto ho effettuato un'analisi con il mio tutor 
 aziendale per capire se effettivamente il software avesse del potenziale.
 Le conclusioni che sono state prese sono le seguenti:
 
 \begin{itemize}
     \item Il prodotto utilizza una tecnologia che i clienti non sono abituati
-        ad utilizzare, quindi andrebbero educati e andrebbe spiegata loro 
+        a vedere ed usare, quindi andrebbero educati e andrebbe spiegata loro 
         l'utilità di queste operazioni. Di sicuro si potrebbe fare, ma il 
         vantaggio che si otterrebbe non giustifica lo sforzo che si dovrebbe
         fare. 
-    \item I costi di transazione per l'upload di un documento sono troppo 
-        elevati per gli standard a cui sono abituati i clienti, si parla di 
-        decine di centesimi fino ad arrivare all'euro per ogni documento 
-        salvato, cifra non vendibile considerando che per ogni utente vengono 
-        caricati decine di file. 
-    \item Il costo per scrittura e lettura di un documento olre ad essere 
+    \item I costi di transazione per l'upload di un documento sono troppo
+        elevati per gli standard di costo attuali per operazioni analoghe su
+        altre piattaforme, si parla di decine di centesimi fino ad arrivare
+        all'euro per ogni documento salvato, cifra non vendibile considerando
+        che per ogni utente vengono caricati decine di file. 
+        Il costo delle funzioni possono essere stimate tramite la seguente tabella
+        che contiene i costi per ogni singola operazione.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.9\textwidth]{OperationGasFeeCostTable.png}
+            \caption{Tabella costi operazioni - \texttt{Ethereum.org}\cite{ethereumGasFeeTable}}
+            \label{fig:operation-gas-fee-cost-table}
+        \end{figure}
+        La tabella è stata trovata su una pagina github che contiene una serie
+        di ricerche riguardo la blokchain.
+        \texttt{https://github.com/djrtwo}\cite{githubEthereumTable}
+
+        Osservando la tabella e conoscendo le operazioni svolte dal proprio 
+        codice è possibile approssimare il costo di ogni funzione eseguita.
+        Ovviamente questa approssimazione serve per avere una prima indicazione
+        del numero di gas fee richieste, ma per avere un riscontro più preciso
+        è necessario un test reale.
+    \item Il costo per scrittura e lettura di un documento oltre ad essere 
         elevato è anche molto fluttuante e dipende da molti fattori come il 
-        prezzo dei gas fee, il prezzo valore del token Etheri, il costo 
+        prezzo dei gas fee, il prezzo valore del token Ether, il costo 
         per ogni operazione eseguita che dipende anche dagli aggiornamenti
         della piattaforma Ethereum ...
         Questo fattore rende difficile anche vendere il prodotto in quanto 
@@ -541,11 +569,13 @@ Le conclusioni che sono state prese sono le seguenti:
         interessato.
 \end{itemize}
 
-A causa di queste complicazioni si è deciso di archiviare il progetto fino a 
-quando la tecnologia non sarà più diffusa e i costi saranno più contenuti. \\
-In ogni lo sviluppo da parte mia è stato molto interessante perchè ha portato
-alla realizzazione di un prodotto che utilizza una tecnologia innovativa e che
-ha permesso di approfondire le conoscenze su questa tecnologia. Inoltre, la
-sperimentazione di paradigmi nuovi porta sempre ad effettuare un'analisi degli
-attuali problemi in cerca di soluzioni più efficaci e questo non può che essere
-un bene per l'azienda.
+A causa di queste complicazioni si è deciso di archiviare il progetto fino a
+quando la tecnologia non sarà più diffusa e costi saranno più contenuti. \\
+Per il momento le stessse funzionalità verranno offerte dalla firma digitale
+dei documenti, che sono una valida alternativa alla blockchain per mantenere
+in modo sicuro i documenti, garantendone l'integrità e la non ripudiabilità.
+Tuttavia l'esplorazione e sperimentazione di una nuova tecnologia ha portato
+a nuove conoscenze che potranno essere utili in fututo nel caso in cui la
+blockchain dovesse diventare una risorsa più utilizzata ed economica, in quanto
+sicuramente le basi tecnologiche sono molto interessanti e offrono degli 
+evidenti vantaggi rispetto a soluzioni più tradizionali e consolidate.

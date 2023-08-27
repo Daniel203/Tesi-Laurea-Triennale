@@ -1,9 +1,47 @@
-\documentclass[11pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[a4paper, total={6in, 9in}]{geometry}
-\usepackage[colorinlistoftodos]{todonotes}
+\documentclass[a4paper, 11pt, titlepage, twoside, openany]{book}
+\usepackage{plain}
+\usepackage{setspace}
 
+% Layout
+\usepackage[
+  paperheight=29.7cm,
+  paperwidth=21cm,
+  outer=1.5cm,
+  inner=2.5cm,
+  top=2cm,
+  bottom=2cm
+]{geometry}
+
+% Chapter
+\usepackage{titlesec}
+\singlespacing
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% Letter
+\usepackage[utf8]{inputenc}
+
+% Language
 \usepackage[italian]{babel}
+
+% PDF/A
+\usepackage[a-1b]{pdfx}
+
+% Image
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+\usepackage{wrapfig}
+\usepackage{stackengine}
+\usepackage{etoolbox}
+
+% Hyperlink
+\usepackage{xurl}
+\usepackage[pdfa]{hyperref}
+\hypersetup{breaklinks=true}
+% List
+\usepackage{enumitem}
+
 
 \usepackage{float}
 \usepackage{hyperref}
@@ -11,30 +49,57 @@
 
 \usepackage{parskip}
 
-\usepackage{graphicx}
-\graphicspath{ {./images/} }
-
 \usepackage{listings}
 \input{packages/solidity-highlighting.tex}
 \input{packages/csharp-highlighting.tex}
 
-
-\title{Tesi laurea triennale}
-\author{Daniel Arduini}
-\date{Luglio 2023}
-
 \begin{document}
+    % Cover
+    \pagenumbering{gobble}
+    \input{etc/cover}
+    \clearpage
 
-\maketitle
+    % Acknowledgements
+    \input{etc/acknowledgements}
+    \clearpage
+    \pagestyle{plain}
 
-\newpage
-\tableofcontents
+    \frontmatter
+    \pagenumbering{Roman}
+    \tableofcontents
+    \clearpage
+    \begingroup
+    \pagestyle{empty}
+    \cleardoublepage
+    \endgroup
 
-\newpage
-\input{chapters/01}
-\newpage
-\input{chapters/02}
-\newpage
-\input{chapters/03}
+    % Start page numbering
+    \mainmatter
+
+    % Group to define space between chapters
+    \begingroup
+    % Override format of title chapter
+    \titleformat{\chapter} {\normalfont\Huge\bfseries}{\thechapter}{1em}{}
+    \titlespacing*{\chapter}{0pt}{0.59in}{0.02in} \titlespacing*{\section}{0pt}{0.20in}{0.02in}
+    \titlespacing*{\subsection}{0pt}{0.10in}{0.02in} \titlespacing*{\subsubsection}{0pt}{0.05in}{0.02in}
+
+    \newpage
+    \input{chapters/01}
+    \newpage
+    \input{chapters/02}
+    \newpage
+    \input{chapters/03}
+
+    \newpage
+    \input{etc/conclusions}
+
+    \endgroup
+
+    % Bibliography
+    \addcontentsline{toc}{chapter}{Bibliography}
+
+    % Alphabetical order of authors
+    \bibliographystyle{plain}
+    \bibliography{bibliography.bib}
 
 \end{document}

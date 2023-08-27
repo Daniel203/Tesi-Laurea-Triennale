@@ -1,12 +1,13 @@
-\section{Blockchain}
+\chapter{Blockchain}
+\label{cha:blockchain}
 
-\subsection{Cos'è?}
+\section{Cos'è?}
 Una blockchain è una struttura pubblica, condivisa e immutabile che permette di
 salvare dati all'interno di blocchi. I blocchi sono collegati tra loro in modo
 tale che ogni blocco verifichi il successivo e per questo modo se un nodo della
 catena si rompe, allora tutta la catena viene invalidata.
 
-\subsection{Parole chiave}
+\section{Parole chiave}
 Si usa parola \textbf{blocco} per indicare un insieme di informazioni che
 vengono salvate all'interno della blockchain. Infatti i dati non sono inseriti
 singolarmente come in un database tradizionale, ma vengono raggruppati in
@@ -40,14 +41,14 @@ analizzare in dettaglio il funzionamento di questa tecnologia.
 
 \newpage
 
-\subsection{Come funziona?}
+\section{Come funziona?}
 In questo capitolo andremo ad analizzare il funzionamento di una blockchain,
 spiegando i vari passaggi che la contraddistinguono. Prenderemo come
 riferimento la blockchain Ethereum in quanto è quella che verrà utilizzata
 nell'esempio pratico, tuttavia la maggior parte dei concetti è applicabile 
 a tutte le altre blockchain.
 
-\subsubsection{Transazione}
+\subsection{Transazione}
 Una transazione, come detto prima, è un'operazione svolta da un utente
 all'interno della blockchain. 
 
@@ -67,7 +68,7 @@ propagherà il cambiamento di stato su tutta la rete. \\
 Le transazioni una volta eseguite vengono salvate all'interno di un blocco che
 verrà poi aggiunto alla catena.
 
-\subsubsection{Blocco}
+\subsection{Blocco}
 La blockchain è per certi versi simile a un database, ossia il suo scopo è
 salvare dati di vario tipo, ma ciò che li differenzia è il modo in cui i dati
 vengono salvati. \\ 
@@ -111,7 +112,7 @@ modificato e quindi il suo hash code è cambiato. Questo ha portato alla
 invalidazione della catena in quanto il blocco 3 non ha più come hash del
 blocco precedente quello del blocco 2.
 
-\subsubsection{Account}
+\subsection{Account}
 Un account è un'entità all'interno della blockchain che ha un saldo in ETH e
 che ha la possibilità di eseguire transazioni. Esistono due tipi di account:
 \textbf{Externally-Owned-Account (EOA)} che è un account che può essere gestito
@@ -151,11 +152,11 @@ Ogni account ha una serie di elementi al suo interno:
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{AccountSchema.png} 
-    \caption{Account}
+    \caption{Account - \texttt{Ethereum.org}\cite{accountSchema}}
     \label{fig:Account}
 \end{figure}
 
-\subsubsection{Ethereum Virtual Machine (EVM)}
+\subsection{Ethereum Virtual Machine (EVM)}
 Nella blockchain di Ethereum c'è un solo computer che ha uno stato a cui
 ogni partecipante della rete deve fare riferimento. Ogni partecipante ne tiene
 una copia e ha inoltre la possibilità di richiedere al computer principale di
@@ -166,7 +167,7 @@ Ogni operazione porta al cambiamento dello stato della EVM, e quando ciò
 avviene, il nuovo stato viene aggiornato su tutti i nodi della rete. \\
 Questo modello di \textbf{macchina a stati distribuita} permette l'esistenza
 degli smart contract, ossia dei programmi scritti dagli utenti che possono
-essere eseguiti all'interno della blockchain. Questa caratteristica differenzia
+essere eseguiti all'interno della blockchain, caratteristica che differenzia
 la blockchain di Ethereum da quella di Bitcoin in quanto quest'ultima non
 permette l'esecuzione di programmi, limitando di molto le possibilità di
 utilizzo della rete.
@@ -174,7 +175,7 @@ utilizzo della rete.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{EVMSchema.png} 
-    \caption{Ethereum Virtual Machine}
+    \caption{Ethereum Virtual Machine - \texttt{Ethereum.org}\cite{EVMSchema}}
     \label{fig:EVM}
 \end{figure}
 
@@ -194,7 +195,7 @@ possiamo descrivere la funzione come segue:
 Dato uno stato $S_t$ e una transazione $T$ viene restituito un nuovo stato
 $\S_{t+1}$.
 
-\subsubsection{Gas fee}
+\subsection{Gas fee}
 \textbf{Gas} si riferisce all'unità che misura la quantità di sforzo computazionale
 richiesto per eseguire operazioni specifiche sulla rete Ethereum. \\
 Poiché ogni transazione di Ethereum richiede risorse computazionali per essere
@@ -229,7 +230,7 @@ units of gas used * (base fee + priority fee)
     21.000 * (10 + 1) = 0.000021 ETH
 \end{equation}
 
-\subsubsection{Ether}
+\subsection{Ether}
 Abbiamo visto che le gas fee vengono pagate in ETH, ma cos'è l'ETH? \\
 \textbf{Ether} (o ETH) è la criptovaluta nativa della blockchain di Ethereum, ciò
 significa che gli scambi di moneta all'interno di questa struttura avvengono
@@ -244,7 +245,9 @@ devono anche essere eliminati, per questo motivo quando un utente effettua
 una transazione, la \textit{base fee}, il cui valore viene impostato dalla
 rete in base alla domanda, viene eliminata.
 
-\subsubsection{Meccanismo del consenso}
+\newpage
+
+\subsection{Meccanismo del consenso}
 Il termine meccanismo di consenso si riferisce all'intera serie di protocolli,
 incentivi e idee che consentono a una rete di nodi di concordare lo stato di
 una blockchain. \\
@@ -291,7 +294,93 @@ ETH).
         dei suoi ETH e quindi molto spesso non è conveniente.
 \end{itemize}
 
-\subsubsection{Smart Contract}
+\subsection{DAPP (Decentralized Application)}
+Una DAPP è un'applicazione sviluppata su una rete decentralizzata che combina 
+un frontend con uno smart contract. 
+
+Alcune caratteristiche sono che l'applicazione è:
+\begin{itemize}
+    \item \textbf{Decentralizzata:} non esiste un server centrale che
+        controlla i dati, ma questi sono distribuiti su tutti i nodi della
+        rete e quindi sono visibili da tutti.
+    \item \textbf{Deterministica:} le operazioni eseguite saranno sempre le
+        stesse a prescindere dall'ambiente di esecuzione.
+    \item \textbf{Touring completa:} è possibile implementare la macchina di
+        Touring, quindi è possibile risolvere qualsiasi problema che ammetta
+        soluzione.
+    \item \textbf{Isolata:} il codice viene eseguito all'interno della EVM e 
+        quindi se un'applicazione è malevola, non può danneggiare il resto del
+        sistema.
+\end{itemize}
+
+\newpage
+
+Il frontend non differisce in alcun modo rispetto ad una normale applicazione
+centralizzata come siamo abituati a conoscere, mentre il backend che è lo smart
+contract ha delle peculiarità che analizzeremo nel prossimo capitolo.
+Rispetto ad un applicazione normale, ci sono dei vantaggi e svantaggi che sono
+strettamente legati al fatto che il backend sia un algoritmo in blockchain.
+
+\textbf{Vantaggi:}
+\begin{itemize}
+    \item \textbf{Zero downtime:} una volta che lo smart contract è stato 
+        pubblicato sulla rete, sarà sempre disponibile e non potrà essere 
+        bloccato da azioni malevole di tipo Denial of Service.
+    \item \textbf{Privacy:} non serve fornire dati personali per fare il deploy
+        o utilizzare l'applicazione, ma basta avere un portafoglio Ethereum.
+    \item \textbf{Resistenza alla censura:} nessuna entità singola può vietare
+        ad un utente di effettuare operazioni verso lo smart contract in quanto
+        è salvato in blockchain.
+    \item \textbf{Integrità dei dati:} i dati sono salvati in blockchain e
+        quindi non possono essere alterati da nessuno.
+    \item \textbf{Computazione senza fiducia/comportamento verificabile:} I
+        contratti intelligenti possono essere analizzati e sono garantiti per
+        l'esecuzione in modi prevedibili, senza la necessità di fidarsi di
+        un'autorità centrale. Questo non è vero nei modelli tradizionali; ad
+        esempio, quando utilizziamo i sistemi bancari online, dobbiamo fidarci
+        del fatto che gli istituti finanziari non utilizzino in modo improprio
+        i nostri dati finanziari, non manomettano i registri o non vengano
+        violati.
+\end{itemize}
+
+\textbf{Svantaggi:}
+\begin{itemize}
+    \item \textbf{Manutenzione:} le dapp possono essere più difficili da
+        mantenere perché il codice e i dati pubblicati sulla blockchain sono
+        più difficili da modificare. È difficile per gli sviluppatori apportare
+        aggiornamenti alle loro dapp (o ai dati sottostanti memorizzati da una
+        dapp) una volta che sono state distribuite, anche se vengono
+        identificati bug o rischi per la sicurezza in una vecchia versione.
+    \item \textbf{Sovraccarico di prestazioni:} c'è un enorme sovraccarico di
+        prestazioni e scalare è davvero difficile. Per raggiungere il livello
+        di sicurezza, integrità, trasparenza e affidabilità richiesto da
+        Ethereum ogni nodo esegue e memorizza ogni transazione ed inoltre anche
+        il consenso della proof-of-stake richiede tempo.
+    \item \textbf{Congestione della rete:} quando una dapp utilizza troppe
+        risorse computazionali, l'intera rete viene sovraccaricata.
+        Attualmente, la rete è in grado di elaborare solo circa 10-15
+        transazioni al secondo; se le transazioni vengono inviate più
+        velocemente di così, il pool di transazioni non confermate può
+        rapidamente aumentare.
+    \item \textbf{Esperienza dell'utente:} potrebbe essere più difficile
+        progettare esperienze user-friendly perché l'utente finale medio
+        potrebbe trovare troppo difficile impostare uno stack di strumenti
+        necessari per interagire con la blockchain in modo veramente sicuro.
+    \item \textbf{Centralizzazione} le soluzioni facili da usare e da
+        sviluppare costruite sopra lo strato di base di Ethereum potrebbero
+        finire per assomigliare comunque a servizi centralizzati; ad esempio,
+        tali servizi possono memorizzare chiavi o altre informazioni sensibili
+        sul lato server, servire un frontend utilizzando un server
+        centralizzato o eseguire importanti logiche aziendali su un server
+        centralizzato prima di scrivere sulla blockchain. La centralizzazione
+        elimina molti (se non tutti) i vantaggi della blockchain rispetto al
+        modello tradizionale.
+\end{itemize}
+
+\newpage
+
+\subsection{Smart Contract}
+\label{cha:smart-contract}
 Uno smart contract è un programma che gira sulla blockchain di Ethereum. È una
 raccolta di \textit{codice} (le sue funzioni) e di \textit{dati} (il suo stato)
 che risiede ad un indirizzo specifico sulla blockchain di Ethereum. \\
@@ -317,8 +406,6 @@ eseguire lo stesso codice e ottenere lo stesso risultato.
 Durante il proseguo della tesi verrà utilizzato come linguaggio \textit{Solidity}
 per la scrittura degli smart contract. Di seguito un esempio di codice:
 
-\newpage
-
 \begin{lstlisting}[language=Solidity]
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -336,16 +423,16 @@ contract SimpleStorage {
 }
 \end{lstlisting}
 
-Per il momento non ci interessa sapere a  cosa serve ogni componente di questo 
+Per il momento non ci interessa sapere a cosa serve ogni componente di questo 
 codice, ci basta capire che è un contratto che permette di salvare una stringa
 e di leggerla. 
 
-\subsection{Approfondimento di Solidity}
+\section{Approfondimento di Solidity}
 Per capire meglio i capitoli successivi di questa tesi, è necessario fare un
 approfondimento sul linguaggio Solidity, in particolare sulla gestione della 
 memoria.
 
-\subsubsection{Memory e Storage}
+\subsection{Memory e Storage}
 Quando vengono dichiarate delle variabili all'interno di uno smart contract, si
 può decidere dove salvare i dati, in \textit{memory} o in \textit{storage}, 
 questo perchè le operazioni in blockchain hanno sempre un costo e spesso elevato,
@@ -384,7 +471,7 @@ verrà cancellato non appena la funzione finirà l'esecuzione.
 La parola \textit{memory} in quseto caso poteva anche essere evitata in quanto 
 implicita, ma è stata inserita per chiarezza. 
 
-\subsubsection{Salvataggio dati di grandezza dinamica (Storage)}
+\subsection{Salvataggio dati di grandezza dinamica (Storage)}
 Una domanda che può sorgere spontanea è: \textit{Come si fa a salvare dati di
 grandezza dinamica in modo permanente?} \\
 Se per esempio instanziamo un \textit{mapping} (l'equivalente di un hashmap)
@@ -422,7 +509,9 @@ salvare una quantità di dati praticamente infinita, bisogna ricordare che
 l'aggiunta di ogni dato ha un costo e questo disincentiva all'utilizzo massivo
 di questo metodo di storage.
 
-\subsection{Applicazioni nel mondo reale}
+\newpage
+
+\section{Esempio di applicazione nel mondo reale}
 La blockchain è una tecnologia che ha preso molto piede negli ultimi anni e 
 un esempio pratico di questa espansione lo troviamo nel mondo dell'automotive
 con Alfa Romeo. Infatti con il lancio della Alfa Romeo Tonale è stata introdotto
