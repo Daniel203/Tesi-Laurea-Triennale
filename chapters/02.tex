@@ -4,7 +4,7 @@
 \section{Cos'è?}
 Una blockchain è una struttura pubblica, condivisa e immutabile che permette di
 salvare dati all'interno di blocchi. I blocchi sono collegati tra loro in modo
-tale che ogni blocco verifichi il successivo e per questo modo se un nodo della
+tale che ogni blocco verifichi il precedente e per questo modo se un nodo della
 catena si rompe, allora tutta la catena viene invalidata.
 
 \section{Parole chiave}
@@ -20,18 +20,35 @@ un legame inviolabile, dato che la modifica di un blocco porterebbe al
 cambiamento del codice hash e quindi all'invalidazione di tutti i collegamenti
 successivi.
 
-Un \textbf{hash code} è un codice che viene generato da una funzione matematica
-che a partire da una stringa di lunghezza variabile, ne genera una di lunghezza
-fissa che identifica univocamente la stringa di partenza. Può essere visto come
-se fosse l'impronta digitale dell'elemento di partenza in quanto è unica e 
-rappresenta in modo diretto l'input iniziale. Il codice hash risulta differente
-anche se un solo carattere della stringa di partenza viene modificato, quindi è 
-facile intuire che se un blocco cambia hash code, allora sicuramente è stato
-mutato.
+% Un \textbf{hash code} è un codice che viene generato da una funzione matematica
+% che a partire da una stringa di lunghezza variabile, ne genera una di lunghezza
+% fissa che identifica univocamente la stringa di partenza. Può essere visto come
+% se fosse l'impronta digitale dell'elemento di partenza in quanto è unica e 
+% rappresenta in modo diretto l'input iniziale. Il codice hash risulta differente
+% anche se un solo carattere della stringa di partenza viene modificato, quindi è 
+% facile intuire che se un blocco cambia hash code, allora sicuramente è stato
+% mutato.
+%
+Un \textbf{hash code}, noto anche come valore hash, è una rappresentazione
+numerica risultante da una funzione matematica. Questa funzione prende in input
+una stringa di lunghezza variabile e produce un valore di lunghezza fissa.
+L'hash code ha la peculiarità di essere unico per una specifica stringa di
+input, il che lo rende simile a un'impronta digitale per l'elemento di
+partenza. Tuttavia, è importante notare che l'hash code non può rappresentare
+in modo completo l'intero input, ma ne è una rappresentazione più compatta. \\
+È fondamentale sottolineare che l'hash code viene generato tramite una funzione
+di hash crittografica. Queste funzioni sono progettate in modo tale da rendere
+estremamente difficile ottenere la stringa di input originale partendo
+dall'hash code. Inoltre, anche una piccola modifica alla stringa di input
+causerà un cambiamento significativo nell'hash code generato. Questa proprietà
+è detta "proprietà di collisione", ed è ciò che conferisce all'hash code la sua
+capacità di rilevare anche le più piccole modifiche ai dati di input.
 
-Ogni computer all'interno della rete è chiamato \textbf{nodo} e tiene in 
-memoria una copia della rete completa. Questo permette alla tecnologia di 
-essere distribuita e decentralizzata, in quanto non esiste un server centrale.
+Ogni computer all'interno della rete è chiamato \textbf{nodo} ed esegue un
+software che scarica una copia della blockchain. Il nodo si occupa di validare
+i blocchi, si tiene aggiornato sulle transazioni e nuovi blocchi e inoltra gli
+aggiornamenti ad altri nodi Questo permette alla tecnologia di essere
+distribuita e decentralizzata, in quanto non esiste un server centrale.
 
 Le operazioni che vengono svolte all'interno di questa struttura sono chiamate
 \textbf{transazioni} e sono salvate all'interno dei blocchi.
@@ -305,8 +322,8 @@ Alcune caratteristiche sono che l'applicazione è:
         rete e quindi sono visibili da tutti.
     \item \textbf{Deterministica:} le operazioni eseguite saranno sempre le
         stesse a prescindere dall'ambiente di esecuzione.
-    \item \textbf{Touring completa:} è possibile implementare la macchina di
-        Touring, quindi è possibile risolvere qualsiasi problema che ammetta
+    \item \textbf{Turing completa:} è possibile implementare la macchina di
+        Turing, quindi è possibile risolvere qualsiasi problema che ammetta
         soluzione.
     \item \textbf{Isolata:} il codice viene eseguito all'interno della EVM e 
         quindi se un'applicazione è malevola, non può danneggiare il resto del
@@ -318,7 +335,7 @@ Alcune caratteristiche sono che l'applicazione è:
 Il frontend non differisce in alcun modo rispetto ad una normale applicazione
 centralizzata come siamo abituati a conoscere, mentre il backend che è lo smart
 contract ha delle peculiarità che analizzeremo nel prossimo capitolo.
-Rispetto ad un applicazione normale, ci sono dei vantaggi e svantaggi che sono
+Rispetto ad un' applicazione normale, ci sono dei vantaggi e svantaggi che sono
 strettamente legati al fatto che il backend sia un algoritmo in blockchain.
 
 \textbf{Vantaggi:}
@@ -437,7 +454,7 @@ Quando vengono dichiarate delle variabili all'interno di uno smart contract, si
 può decidere dove salvare i dati, in \textit{memory} o in \textit{storage}, 
 questo perchè le operazioni in blockchain hanno sempre un costo e spesso elevato,
 qundi questa possibilità aiuta gli sviluppatori a gestire la parte economica
-relativa alla scrittura e lettura dei dati. 
+relativa alla scrittura e lettura dei dati. \texttt{}\cite{storageVsMemoryCosts}
 
 \textbf{Storage} \\
 I dati persistenti sono rappresentati dalle variabili di stato e questi dati
@@ -507,7 +524,7 @@ struttura dati utilizzata che si chiama \textbf{Merkle Patricia Trie}. \\
 Ovviamente, per quanto possa sembrare che con uno smart contract si possa 
 salvare una quantità di dati praticamente infinita, bisogna ricordare che 
 l'aggiunta di ogni dato ha un costo e questo disincentiva all'utilizzo massivo
-di questo metodo di storage.
+di questo metodo di storage. \texttt{}\cite{storageSize}
 
 \newpage
 
@@ -523,5 +540,7 @@ il fatto che i dati non possano essere modificati e che siano accessibili da
 tutti rende il dato salvato nella rete un dato di valore e di fiducia. Inoltre, 
 in questo caso specifico vengono anche utilizzati gli \textbf{NFT} che sono
 dei certificati digitali sempre basati sulla blockchain che servono appunto
-come atto di garanzia rispetto ad un bene, sia fisico che digitale.
+come atto di garanzia rispetto ad un bene, sia fisico che
+digitale.\texttt{}\cite{alfaRomeoBlockchain}
+
 
