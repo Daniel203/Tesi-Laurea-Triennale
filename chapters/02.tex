@@ -20,29 +20,24 @@ un legame inviolabile, dato che la modifica di un blocco porterebbe al
 cambiamento del codice hash e quindi all'invalidazione di tutti i collegamenti
 successivi.
 
-% Un \textbf{hash code} è un codice che viene generato da una funzione matematica
-% che a partire da una stringa di lunghezza variabile, ne genera una di lunghezza
-% fissa che identifica univocamente la stringa di partenza. Può essere visto come
-% se fosse l'impronta digitale dell'elemento di partenza in quanto è unica e 
-% rappresenta in modo diretto l'input iniziale. Il codice hash risulta differente
-% anche se un solo carattere della stringa di partenza viene modificato, quindi è 
-% facile intuire che se un blocco cambia hash code, allora sicuramente è stato
-% mutato.
-%
-Un \textbf{hash code}, noto anche come valore hash, è una rappresentazione
-numerica risultante da una funzione matematica. Questa funzione prende in input
-una stringa di lunghezza variabile e produce un valore di lunghezza fissa.
-L'hash code ha la peculiarità di essere unico per una specifica stringa di
-input, il che lo rende simile a un'impronta digitale per l'elemento di
-partenza. Tuttavia, è importante notare che l'hash code non può rappresentare
-in modo completo l'intero input, ma ne è una rappresentazione più compatta. \\
-È fondamentale sottolineare che l'hash code viene generato tramite una funzione
-di hash crittografica. Queste funzioni sono progettate in modo tale da rendere
-estremamente difficile ottenere la stringa di input originale partendo
-dall'hash code. Inoltre, anche una piccola modifica alla stringa di input
-causerà un cambiamento significativo nell'hash code generato. Questa proprietà
-è detta "proprietà di collisione", ed è ciò che conferisce all'hash code la sua
-capacità di rilevare anche le più piccole modifiche ai dati di input.
+Un \textbf{hash code} è l'output risultante da una funzione matematica di
+hashing crittografico. Questa funzione prende in input una stringa di lunghezza
+variabile e produce un valore di lunghezza fissa. L'output generato è
+deterministico, cioè che per una specifica stringa di input, l'hash code sarà
+sempre lo stesso. Inoltre, la funzione è unidirezionale, il che significa che è
+virtualmente impossibile risalire alla stringa di input originale partendo
+dall'output data complessità computazionale di tale operazione, invece è
+estremamente semplice passare dall'input all'output in quanto basta applicare
+le regole dell'algoritmo. \\
+Il codice di output non è univoco perchè due input possono dare come risultato
+lo stesso output, tuttavia la probabilità di questo evento, chiamato
+\textit{collisione}, è molto rara data la grandezza dello spazio delle
+soluzioni. Basti considerare che \textit{Bitcoin}, che utilizza l'algoritmo
+SHA-256, ha $2^{256}$ possibili output, un numero talmente grande che rende
+molto remota la possibilità di una collisione. Per dare un'idea di quanto
+grande sia questo numero, si consideri che il numero di atomi nell'universo è
+stimato essere $10^{80}$ mentre il numero di possibili output è circa
+$10^{76}$, quindi solamente 4 ordini di grandezza inferiore.
 
 Ogni computer all'interno della rete è chiamato \textbf{nodo} ed esegue un
 software che scarica una copia della blockchain. Il nodo si occupa di validare
