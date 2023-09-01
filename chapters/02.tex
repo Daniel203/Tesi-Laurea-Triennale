@@ -22,22 +22,36 @@ successivi.
 
 Un \textbf{hash code} è l'output risultante da una funzione matematica di
 hashing crittografico. Questa funzione prende in input una stringa di lunghezza
-variabile e produce un valore di lunghezza fissa. L'output generato è
-deterministico, cioè che per una specifica stringa di input, l'hash code sarà
-sempre lo stesso. Inoltre, la funzione è unidirezionale, il che significa che è
+variabile e produce un valore di lunghezza fissa. L'output è deterministico,
+cioè che per una specifica stringa di input il valore generato sarà sempre lo
+stesso. Inoltre, la funzione è unidirezionale, il che significa che è
 virtualmente impossibile risalire alla stringa di input originale partendo
 dall'output data complessità computazionale di tale operazione, invece è
 estremamente semplice passare dall'input all'output in quanto basta applicare
 le regole dell'algoritmo. \\
-Il codice di output non è univoco perchè due input possono dare come risultato
-lo stesso output, tuttavia la probabilità di questo evento, chiamato
-\textit{collisione}, è molto rara data la grandezza dello spazio delle
-soluzioni. Basti considerare che \textit{Bitcoin}, che utilizza l'algoritmo
-SHA-256, ha $2^{256}$ possibili output, un numero talmente grande che rende
-molto remota la possibilità di una collisione. Per dare un'idea di quanto
-grande sia questo numero, si consideri che il numero di atomi nell'universo è
-stimato essere $10^{80}$ mentre il numero di possibili output è circa
-$10^{76}$, quindi solamente 4 ordini di grandezza inferiore.
+Un algoritmo di hashing ha tra gli obiettivi quello di ridurre il più possibile
+la probabilità di collisione accidentale, ossia che due input differenti
+restituiscano lo stesso output. Questo evento è molto raro, basti pensare che
+il numero possibile di output dell'algoritmo SHA-256 utilizzato da bitcoin è
+pari a $2^{256}$. \\ Possiamo distinguere due tipi di funzioni hash:
+\textbf{crittografiche} e \textbf{non crittografiche}. Quelle crittografiche
+hanno delle peculiarità che le rendono adatte all'uso in blockchain, ad
+esempio:
+\begin {itemize}
+    \item \textbf{Pre-image resistance}: dato un hash code $h$ deve essere
+        molto difficile trovare un input $m$ tale che $h = hash(m)$.
+    \item \textbf{Second pre-image resistance}: dato un input $m_1$ deve
+        essere molto difficile trovare un input $m_2$ tale che $m_1 \neq m_2$
+        e $hash(m_1) = hash(m_2)$.
+    \item \textbf{Collision resistance}: deve essere molto difficile trovare
+        una coppia di input $m_1$ e $m_2$ tali che $m_1 \neq m_2$ e $hash(m_1)
+        = hash(m_2)$.
+\end {itemize}
+Date queste caratteristiche risulta molto complicato sostituire un blocco di una
+blockchain con un altro blocco che abbia lo stesso hash in quanto le funzioni
+di hash \textit{crittografiche}, a differenza di quelle \textit{non
+crittografiche}, mirano a proteggere anche dalla ricerca volontaria di
+collisioni e non solo dalle collisioni casuali. 
 
 Ogni computer all'interno della rete è chiamato \textbf{nodo} ed esegue un
 software che scarica una copia della blockchain. Il nodo si occupa di validare
@@ -48,10 +62,8 @@ distribuita e decentralizzata, in quanto non esiste un server centrale.
 Le operazioni che vengono svolte all'interno di questa struttura sono chiamate
 \textbf{transazioni} e sono salvate all'interno dei blocchi.
 
-Ora che abbiamo definito le parole chiave della blockchain possiamo andare ad
-analizzare in dettaglio il funzionamento di questa tecnologia.
-
-\newpage
+Ora che abbiamo definito le parole chiave, possiamo andare ad analizzare nel 
+dettaglio il funzionamento di una blockchain.
 
 \section{Come funziona?}
 In questo capitolo andremo ad analizzare il funzionamento di una blockchain,
@@ -148,13 +160,15 @@ differenze tra i due:
         all'interno del codice. Non hanno chiavi come gli account EOA
 \end{itemize}
 
+\newpage
+
 Ogni account ha una serie di elementi al suo interno:
 \begin{itemize}
     \item \textbf{nonce:} valore che conta il numero di transazioni eseguite
         per un EOA, oppure il numero di contratti creati per un contract
         account. Solo una transazione con un certo nonce può essere eseguito
         da un account, questo aiuta la protezione da attacchi di ripetizione.
-    \item \textbf{balance} il numero di ETH che l'account possiede
+    \item \textbf{balance} il numero di ETH che l'account possiede.
     \item \textbf{codeHash:} il codice dell'account che viene anche salvato 
         all'interno della EVM. Non può essere in nessun modo modificato.
     \item \textbf{storageRoot} l'hash code che punta al nodo contenente lo 
@@ -230,7 +244,10 @@ Il costo totale in gas che si deve pagare è diviso in due parti:
 \textit{base fee} e \textit{priority fee (tip)}. \\
 La \textbf{base fee} è la quantità richiesta dal protocollo che bisogna pagare
 per poter ritenere l'operazione valida. La \textbf{priority fee} è la quantità
-di gas che si offre in più per far eseguire la transazione prima di altre. \\
+di gas che si offre in più per far eseguire la transazione prima di altre. 
+
+\newpage
+
 Per esempio, se si vuole inviare una transazione che richiede 21.000 gas, la
 \textit{base fee} è di 10gwei e si offre 1 gwei come \textit{priority fee},
 allora il costo totale sarà: 
@@ -256,8 +273,6 @@ Ovviamente, per evitare il deprezzamento dovuto a inflazione, alcuni Ether
 devono anche essere eliminati, per questo motivo quando un utente effettua
 una transazione, la \textit{base fee}, il cui valore viene impostato dalla
 rete in base alla domanda, viene eliminata.
-
-\newpage
 
 \subsection{Meccanismo del consenso}
 Il termine meccanismo di consenso si riferisce all'intera serie di protocolli,
